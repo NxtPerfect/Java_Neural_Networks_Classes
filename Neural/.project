@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>Neural</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>src/Neural/Neuron.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/programming/Java/Sieci/Neuron.java</locationURI>
+		</link>
+		<link>
+			<name>src/Neural/Siec.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/programming/Java/Sieci/Siec.java</locationURI>
+		</link>
+		<link>
+			<name>src/Neural/Test.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/programming/Java/Sieci/Test.java</locationURI>
+		</link>
+		<link>
+			<name>src/Neural/Warstwa.java</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/programming/Java/Sieci/Warstwa.java</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>
