@@ -10,6 +10,6 @@
 - [ ] modyfikacja ogolna klasy Test.java
 
 # Pawel Majewski
-- [ ] modyfikacjami klasy Warstwa
-- [ ] modyfikacja klasy Nueron
+- [x] modyfikacja klasy Warstwa
+- [x] modyfikacja klasy Neuron
 - [ ] modyfikacja klasy Siec
