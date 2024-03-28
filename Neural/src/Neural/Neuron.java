@@ -28,11 +28,11 @@ public class Neuron {
 			wagi[i] = (r.nextDouble() - 0.5) * 2.0 * 0.01;// do projektu
 	}
 	
-	public int LiczbaWejsc() {
+	public int liczbaWejsc() {
 		return liczba_wejsc;
 	}
 
-	public double oblicz_wyjscie(double[] wejscia) {
+	public double obliczWyjscie(double[] wejscia) {
 		double fi = wagi[0];
 		// double fi=0.0;
 		for (int i = 1; i <= liczba_wejsc; i++)
@@ -47,15 +47,15 @@ public class Neuron {
 //		return wynik;
 	}
 	
-	public void UstawDelte(double delta) {
+	public void ustawDelte(double delta) {
 		this.delta = delta;
 	}	
 	
-	public double DeltaRazyWagi(int n) {
+	public double deltaRazyWagi(int n) {
 		return delta*wagi[n];
 	}
 	
-	public void ZmienWagi(double[] wejscie) {
+	public void zmienWagi(double[] wejscie) {
 		
 		wagi[0] = eta*delta*fPochodna(poprzedniaSuma);
 		for(int i=1;i<wagi.length;i++)
