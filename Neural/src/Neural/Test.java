@@ -23,7 +23,7 @@ public class Test extends JFrame {
 				for (int y = 0; y < getHeight(); y++) {
 					wej[0] = 2.0 * (x - getWidth() / 2) / getWidth();
 					wej[1] = 2.0 * (y - getHeight() / 2) / getHeight();
-					wynik = siec.oblicz_wyjscie(wej);
+					wynik = siec.obliczWyjscie(wej);
 
 					/*
 					 * g.setColor(new Color((wynik[0]<0.5)?0:(int)Math.round((wynik[0]-0.5)*510),

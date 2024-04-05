@@ -17,7 +17,7 @@ public class Warstwa {
 			neurony[i] = new Neuron(liczba_wejsc);
 	}
 
-	double[] oblWyjscie(double[] wejscie) {
+	double[] obliczWyjscie(double[] wejscie) {
 		PopWejscie = wejscie;
 		double[] wyjscie = new double[liczba_neuronow];
 		for (int i = 0; i < liczba_neuronow; i++)
@@ -25,7 +25,7 @@ public class Warstwa {
 		return wyjscie;
 	}
 
-	public double[] oblDolnaWarstwaDelta() {
+	public double[] obliczDolnaWarstwaDelta() {
 		int LicznikNeuronowDolnejWar = neurony[0].liczbaWejsc();
 		double[] delta = new double[LicznikNeuronowDolnejWar];
 
