@@ -2,7 +2,7 @@
 - litery M, V, W
 
 # Filip Madej
-- [ ] panel rysujący
+- [x] panel rysujący
 - [ ] dodanie elementów do ciągu uczącego i testowego
 
 # Milosz Milosavljevic

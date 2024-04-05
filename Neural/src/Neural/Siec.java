@@ -19,7 +19,7 @@ public class Siec {
 	double[] oblicz_wyjscie(double[] wejscia) {
 		double[] wyjscie = null;
 		for (int i = 0; i < liczba_warstw; i++)
-			wejscia = wyjscie = warstwy[i].oblicz_wyjscie(wejscia);
+			wejscia = wyjscie = warstwy[i].oblWyjscie(wejscia);
 		return wyjscie;
 	}
 }
