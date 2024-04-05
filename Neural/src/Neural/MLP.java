@@ -202,17 +202,16 @@ public class MLP extends JFrame {
 	}
 	
 	private void wczytajPlik(ActionEvent e) {
-		String sciezka = "./ciagUczacy.txt";
-		File file;
+		String sciezka = "src/Neural/ciagUczacy.txt";
 		try {
-			file = new File(sciezka);
+			File file = new File(sciezka);
+			if (!file.exists()) {
+				JOptionPane.showMessageDialog(null, "Plik nie istnieje.", "Błąd", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 		} catch(Exception ex) {
 			JOptionPane.showMessageDialog(null, "Nie można znaleźć pliku.", "Błąd", JOptionPane.ERROR_MESSAGE);
 			ex.printStackTrace();
-			return;
-		}
-		if (!file.exists()) {
-			JOptionPane.showMessageDialog(null, "Nie można znaleźć pliku.", "Błąd", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		ciagLiter = new ArrayList<boolean []>();
