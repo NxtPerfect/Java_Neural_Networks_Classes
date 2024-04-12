@@ -41,8 +41,8 @@ public class MLP extends JFrame {
 	private int[] ileNeuronowWarstwa;
 	private static final int liczbaLiter = 3;
 	private static final int liczbaWarstw = 3;
-	private static final int macierzWierszy = 8;
-	private static final int macierzKolumn = 8;
+	private static final int macierzWierszy = 80; // 8
+	private static final int macierzKolumn = 80; // 8
 	private static final int warstwaUkryta = 10;
 	private int literWZbiorze;
 	private int liczbaPikseli;
@@ -54,7 +54,7 @@ public class MLP extends JFrame {
 		setTitle("Projekt 1");
 		setSize(1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new GridLayout(1, 2));
+		setLayout(new GridLayout(1, 1));
 
 		// Ustawienie okna na środku ekranu
 		Toolkit kit = Toolkit.getDefaultToolkit();
@@ -108,7 +108,6 @@ public class MLP extends JFrame {
 		buttonUczSiec.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				wczytajPlik(arg0);
 			}
 		});
@@ -153,24 +152,36 @@ public class MLP extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int pktDlaSieci = 0;
-				String[] trainingData = wczytajPlik("ciagTestowy.txt");
+				String[] trainingData = wczytajPlik("src/Neural/ciagTestowy.txt");
+				String[] labels = new String[Math.round(trainingData.length / 2)];
 
-				double[] data = new double[64];
+				double[] data = new double[67];
 
-				for (int i = 0; i < 100; i++) {
-					for (int j = 0; j < 64; j++) {
+				int k = 0; // Label index
+				for (int i = 2; i < trainingData.length; i++) {
+					// Usuwa spacje i nowe linie ze stringa
+					trainingData[i] = trainingData[i].replaceAll("\\s", "");
+					trainingData[i] = trainingData[i].replaceAll("\\n", "");
+					if (trainingData[i].length() == 3) {
+						labels[k] = trainingData[i];
+						k += 1;
+						continue;
+					}
+					for (int j = 0; j < trainingData[i].length(); j++) {
 						data[j] = (int) (trainingData[i].charAt(j) - '0');
 					}
 					double[] wynik = siec.obliczWyjscie(data);
 					int[] znak = { wynik[0] > 0.5 ? 1 : 0, wynik[1] > 0.5 ? 1 : 0, wynik[2] > 0.5 ? 1 : 0 };
-					if (znak[0] == (int) (trainingData[i].charAt(64) - '0')
-							&& znak[1] == (int) (trainingData[i].charAt(65) - '0')
-							&& znak[2] == (int) (trainingData[i].charAt(66) - '0')) {
+					if (znak[0] == (int) (labels[k - 1].charAt(0) - '0')
+							&& znak[1] == (int) (labels[k - 1].charAt(1) - '0')
+							&& znak[2] == (int) (labels[k - 1].charAt(2) - '0')) {
 						pktDlaSieci++;
 					}
+//					System.out.println("Znak: " + znak[0] + znak[1] + znak[2]);
+//					System.out.println("Oczekiwany Znak: " + labels[k - 1]);
 				}
-				double skutecznoscSieci = (double) pktDlaSieci / 100.0 * 100;
-				labelSkutecznoscSieci.setText("Skuteczność sieci: " + String.format("%.2f", skutecznoscSieci) + "%");
+				double skutecznoscSieci = (double) pktDlaSieci / ((trainingData.length - 2) / 2) * 100.0;
+				labelSkutecznoscSieci.setText("Skuteczność: " + String.format("%.2f", skutecznoscSieci) + "%");
 			}
 		});
 
@@ -197,15 +208,15 @@ public class MLP extends JFrame {
 		radioGroup.add(radioInny);
 
 		// ---------------Label
-		labelSkutecznoscSieci = new JLabel("Skutecznosc");
+		labelSkutecznoscSieci = new JLabel("Skuteczność:");
 		buttonPanel.add(labelSkutecznoscSieci);
 
 		// ---------------Label
-		labelLiczbaEpok = new JLabel("Epoki");
+		labelLiczbaEpok = new JLabel("Epoki:");
 		buttonPanel.add(labelLiczbaEpok);
 
 		// ---------------Label
-		labelIloscCU = new JLabel("Ilosc CU");
+		labelIloscCU = new JLabel("Ilosc CU:");
 		buttonPanel.add(labelIloscCU);
 
 		add(buttonPanel);
@@ -251,7 +262,7 @@ public class MLP extends JFrame {
 	// Wczytanie ciągu uczącego z pliku
 	// w folderze src/NazwaProjektu/ciagUczacy.txt
 	private void wczytajPlik(ActionEvent e) {
-		String sciezka = "src/Neural/ciagTest.txt";
+		String sciezka = "src/Neural/ciagUczacy.txt";
 		try {
 			File file = new File(sciezka);
 			if (!file.exists()) {
@@ -298,8 +309,8 @@ public class MLP extends JFrame {
 			ex.printStackTrace();
 			return;
 		}
-		
-		ileNeuronowWarstwa = new int[liczbaWarstw];	
+
+		ileNeuronowWarstwa = new int[liczbaWarstw];
 		ileNeuronowWarstwa[0] = liczbaPikseli;
 		ileNeuronowWarstwa[1] = warstwaUkryta;
 		ileNeuronowWarstwa[2] = literWZbiorze;
@@ -308,26 +319,26 @@ public class MLP extends JFrame {
 
 		ArrayList<double[]> ListaLiterekDouble = new ArrayList<double[]>();
 		ArrayList<double[]> ListaMacierzyDouble = new ArrayList<double[]>();
-			
-		for(int i = 0; i< ciagLiter.size(); i++) {
+
+		for (int i = 0; i < ciagLiter.size(); i++) {
 			boolean[] LiterkiBoolean = ciagLiter.get(i);
 			boolean[] MacierzBoolean = ciagMacierzy.get(i);
 
 			double[] ListaLiterek = new double[LiterkiBoolean.length];
 			double[] ListaMacierzy = new double[MacierzBoolean.length];
-			
+
 			for (int j = 0; j < ListaLiterek.length; j++) {
 				ListaLiterek[j] = LiterkiBoolean[j] ? 1.0 : 0.0;
 			}
 			for (int j = 0; j < ListaMacierzy.length; j++) {
 				ListaMacierzy[j] = MacierzBoolean[j] ? 1.0 : 0.0;
-			}			
+			}
 
 			ListaLiterekDouble.add(ListaLiterek);
 			ListaMacierzyDouble.add(ListaMacierzy);
 		}
-		
-		siec.UczSieZCiagu(ListaMacierzyDouble, ListaLiterekDouble);		
+
+		siec.UczSieZCiagu(ListaMacierzyDouble, ListaLiterekDouble);
 	}
 
 	private String[] wczytajPlik(String path) {
@@ -337,15 +348,14 @@ public class MLP extends JFrame {
 			return null;
 		}
 		try {
-			String temp = "";
+			ArrayList<String> temp = new ArrayList<String>();
 			Scanner in = new Scanner(file);
 			while (in.hasNextLine()) {
-				temp += in.nextLine() + "\n";
+				temp.add(in.nextLine() + "\n");
 			}
 			in.close();
-			return temp.toArray();
-		}
-		catch (Exception ex) {
+			return temp.toArray(new String[0]);
+		} catch (Exception ex) {
 			System.err.println(ex);
 			ex.printStackTrace();
 			return null;
@@ -396,7 +406,7 @@ public class MLP extends JFrame {
 	private void nowaSiec(int[] warstwa) {
 		siec = new Siec(warstwa[0], warstwa.length, warstwa);
 	}
-	
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			@Override

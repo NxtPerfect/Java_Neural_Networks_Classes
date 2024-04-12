@@ -43,8 +43,8 @@ public class Warstwa {
 		}
 	}
 
-	public void zmienWagi() {
+	public void zmienWagi(double eps) {
 		for (int i = 0; i < neurony.length; i++)
-			neurony[i].zmienWagi(PopWejscie);
+			neurony[i].zmienWagi(PopWejscie, eps);
 	}
 }

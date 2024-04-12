@@ -5,8 +5,10 @@ import java.util.ArrayList;
 public class Siec {
 	Warstwa[] warstwy;
 	int liczba_warstw;
-	private static final int liczbaEpok = 500;
-	private static final double EPS = 0.25;
+	private static final int liczbaEpok = 100;
+	private static final double EPS = 0.1;
+	private static final double learningRateDecay = 0.55;
+	private static int attempts = 20;
 
 	public Siec() {
 		warstwy = null;
@@ -23,14 +25,30 @@ public class Siec {
 	double[] obliczWyjscie(double[] wejscia) {
 		double[] wyjscie = null;
 		for (int i = 0; i < liczba_warstw; i++)
-			wejscia = wyjscie = warstwy[i].obliczWyjscie(wejscia);
+			wyjscie = warstwy[i].obliczWyjscie(wejscia);
 		return wyjscie;
 	}
 
-	void UczSieZCiagu(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe) {
+	private double computeMSE(double[] predicted, double[] actual) {
+		if (predicted.length != actual.length) {
+			throw new IllegalArgumentException("Arrays must have the same length");
+		}
 
+		double sum = 0.0;
+		for (int i = 0; i < predicted.length; i++) {
+			double error = predicted[i] - actual[i];
+			sum += error * error; // Squaring the error
+		}
+
+		return sum / predicted.length; // Computing the average
+	}
+
+	void UczSieZCiagu(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe) {
+		double obecnyEPS = EPS;
 		for (int epoki = 0; epoki < liczbaEpok; epoki++) {
 			int LPopOdp = 0;
+			double totalLoss = 0;
+			double lastAverageLoss = 1;
 
 			for (int nrLitery = 0; nrLitery < DaneWejsciowe.size(); nrLitery++) {
 				double[] Wyjscie = DaneWejsciowe.get(nrLitery);
@@ -38,6 +56,9 @@ public class Siec {
 				double delta[] = new double[PopWyjscie.length];
 				for (int i = 0; i < liczba_warstw; i++)
 					Wyjscie = warstwy[i].obliczWyjscie(Wyjscie);
+
+				double loss = computeMSE(Wyjscie, PopWyjscie);
+				totalLoss += loss;
 
 				boolean CzyBlisko = true;
 				for (int i = 0; i < Wyjscie.length; i++)
@@ -51,11 +72,21 @@ public class Siec {
 				}
 				warstwy[0].ustawDelteWNeuronach(delta);
 				for (int i = 0; i < warstwy.length; i++)
-					warstwy[i].zmienWagi();
+					warstwy[i].zmienWagi(obecnyEPS);
 			}
-			if (LPopOdp == DaneWejsciowe.size())
+
+			double averageLoss = totalLoss / DaneWejsciowe.size();
+			if (averageLoss > lastAverageLoss) attempts -= 1;
+			lastAverageLoss = averageLoss;
+			double accuracy = (double) (LPopOdp / DaneWejsciowe.size()) * 100.0;
+			System.out.println("Epoka: " + epoki + " Loss: " + String.format("%.6f", averageLoss) + " Accuracy: "
+					+ accuracy + "%");
+			if (LPopOdp == DaneWejsciowe.size() && epoki >= 0.7 * liczbaEpok)
 				break;
-			MLP.labelLiczbaEpok.setText("Liczba Epok Nauki: " + epoki);
+			if (attempts == 0)
+				break;
+			MLP.labelLiczbaEpok.setText("Epoki: " + epoki);
+			obecnyEPS *= learningRateDecay;
 		}
 	}
 
