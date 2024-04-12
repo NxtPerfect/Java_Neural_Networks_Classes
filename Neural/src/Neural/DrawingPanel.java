@@ -13,7 +13,7 @@ public class DrawingPanel extends JPanel {
 	private static int HEIGHT = 500;
 
 	public DrawingPanel() {
-		setPreferredSize(new Dimension(500, 500));
+		setPreferredSize(new Dimension(1000, 1000));
 		setBackground(Color.white);
 		obraz = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
 
