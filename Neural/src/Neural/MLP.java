@@ -1,5 +1,6 @@
 package Neural;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -39,11 +40,11 @@ public class MLP extends JFrame {
 	private ArrayList<boolean[]> ciagLiter;
 	private ArrayList<boolean[]> ciagMacierzy;
 	private int[] ileNeuronowWarstwa;
-	private static final int liczbaLiter = 3;
-	private static final int liczbaWarstw = 3;
-	private static final int macierzWierszy = 80; // 8
-	private static final int macierzKolumn = 80; // 8
-	private static final int warstwaUkryta = 10;
+	private static final int liczbaLiter = 3; // 3
+	private static final int liczbaWarstw = 3; // 3
+	private static final int macierzWierszy = 8; // 8
+	private static final int macierzKolumn = 8; // 8
+	private static final int warstwaUkryta = 10; // 10
 	private int literWZbiorze;
 	private int liczbaPikseli;
 	private Siec siec;
@@ -108,7 +109,13 @@ public class MLP extends JFrame {
 		buttonUczSiec.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				buttonUczSiec.setEnabled(false);
+				buttonUczSiec.setText("Trwa uczenie...");
 				wczytajPlik(arg0);
+				buttonUczSiec.setEnabled(true);
+				setCursor(Cursor.getDefaultCursor());
+				buttonUczSiec.setText("Ucz Sieć");
 			}
 		});
 
@@ -180,7 +187,7 @@ public class MLP extends JFrame {
 //					System.out.println("Znak: " + znak[0] + znak[1] + znak[2]);
 //					System.out.println("Oczekiwany Znak: " + labels[k - 1]);
 				}
-				double skutecznoscSieci = (double) pktDlaSieci / ((trainingData.length - 2) / 2) * 100.0;
+				double skutecznoscSieci = (double) pktDlaSieci / ((trainingData.length - 2.0) / 2.0) * 100.0;
 				labelSkutecznoscSieci.setText("Skuteczność: " + String.format("%.2f", skutecznoscSieci) + "%");
 			}
 		});

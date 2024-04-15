@@ -53,11 +53,11 @@ public class Neuron {
 
 	public void zmienWagi(double[] wejscie, double eta) {
 
-//		wagi[0] = eta*delta*fPochodnaSigma(poprzedniaSuma);
-		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
+		wagi[0] = eta * delta * fPochodnaSigma(poprzedniaSuma);
+//		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
 		for (int i = 1; i < wagi.length; i++)
-//			wagi[i] += eta*delta*fPochodnaSigma(poprzedniaSuma)*wejscie[i-1];
-			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
+			wagi[i] += eta * delta * fPochodnaSigma(poprzedniaSuma) * wejscie[i - 1];
+//			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
 
 		delta = 0.0;
 		poprzedniaSuma = 0;
