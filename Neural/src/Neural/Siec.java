@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class Siec {
 	Warstwa[] warstwy;
 	int liczba_warstw;
-	private static final int liczbaEpok = 100;
+	private static final int liczbaEpok = 600;
 	private static final double EPS = 0.1;
-	private static final double learningRateDecay = 0.55;
+//	private static final double learningRateDecay = 0.15;
 	private static int attempts = 20;
 
 	public Siec() {
@@ -22,10 +22,10 @@ public class Siec {
 			warstwy[i] = new Warstwa((i == 0) ? liczba_wejsc : lnww[i - 1], lnww[i]);
 	}
 
-	double[] obliczWyjscie(double[] wejscia) {
+	double[] obliczWyjscie(double[] wejscie) {
 		double[] wyjscie = null;
 		for (int i = 0; i < liczba_warstw; i++)
-			wyjscie = warstwy[i].obliczWyjscie(wejscia);
+			wejscie = wyjscie = warstwy[i].obliczWyjscie(wejscie);
 		return wyjscie;
 	}
 
@@ -44,7 +44,7 @@ public class Siec {
 	}
 
 	void UczSieZCiagu(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe) {
-		double obecnyEPS = EPS;
+		double obecnyEPS = 0.1;
 		for (int epoki = 0; epoki < liczbaEpok; epoki++) {
 			int LPopOdp = 0;
 			double totalLoss = 0;
@@ -78,15 +78,16 @@ public class Siec {
 			double averageLoss = totalLoss / DaneWejsciowe.size();
 			if (averageLoss > lastAverageLoss) attempts -= 1;
 			lastAverageLoss = averageLoss;
-			double accuracy = (double) (LPopOdp / DaneWejsciowe.size()) * 100.0;
+			double accuracy = (double) ((double) LPopOdp / (double) DaneWejsciowe.size()) * 100.0;
 			System.out.println("Epoka: " + epoki + " Loss: " + String.format("%.6f", averageLoss) + " Accuracy: "
-					+ accuracy + "%");
+					+ String.format("%.2f", accuracy) + "%");
+			System.out.println(LPopOdp + " / " + DaneWejsciowe.size());
 			if (LPopOdp == DaneWejsciowe.size() && epoki >= 0.7 * liczbaEpok)
 				break;
 			if (attempts == 0)
 				break;
 			MLP.labelLiczbaEpok.setText("Epoki: " + epoki);
-			obecnyEPS *= learningRateDecay;
+//			obecnyEPS *= learningRateDecay;
 		}
 	}
 
