@@ -17,11 +17,11 @@ public class Warstwa {
 			neurony[i] = new Neuron(liczba_wejsc);
 	}
 
-	double[] obliczWyjscie(double[] wejscie) {
+	double[] obliczWyjscie(double[] wejscie, boolean training) {
 		PopWejscie = wejscie;
 		double[] wyjscie = new double[liczba_neuronow];
 		for (int i = 0; i < liczba_neuronow; i++)
-			wyjscie[i] = neurony[i].obliczWyjscie(wejscie);
+			wyjscie[i] = neurony[i].obliczWyjscie(wejscie, training);
 		return wyjscie;
 	}
 

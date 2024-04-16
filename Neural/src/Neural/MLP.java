@@ -33,8 +33,7 @@ public class MLP extends JFrame {
 	private final JRadioButton radioM, radioV, radioW, radioInny;
 	private JLabel labelRozpoznanyZnak;
 	private final DrawingPanel drawingPanel;
-	static JLabel labelSkutecznoscSieci, labelIloscCU;
-	static JLabel labelLiczbaEpok;
+	static JLabel labelSkutecznoscSieci, labelIloscCU, labelLiczbaEpok;
 
 	// Dane sieci
 	private ArrayList<boolean[]> ciagLiter;
@@ -92,7 +91,7 @@ public class MLP extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				boolean[] macierzBoleanLiter = drawingPanel.getObszarLitera(macierzKolumn, macierzWierszy);
 				double[] wejsciePikseleLiter = zamienTabliceBolNaDouble(macierzBoleanLiter);
-				double[] rozpoznanaLitera = siec.obliczWyjscie(wejsciePikseleLiter);
+				double[] rozpoznanaLitera = siec.obliczWyjscie(wejsciePikseleLiter, false);
 				sprawdzLitere(rozpoznanaLitera);
 			}
 		});
@@ -132,6 +131,7 @@ public class MLP extends JFrame {
 				radioValues = new boolean[] { radioM.isSelected(), radioV.isSelected(), radioW.isSelected() };
 				ciagMacierzy.add(drawingPanel.getObszarLitera(macierzKolumn, macierzWierszy));
 				ciagLiter.add(radioValues);
+				labelRozpoznanyZnak.setText("Rozpoznany znak to: brak");
 				drawingPanel.wyczysc();
 			}
 		});
@@ -177,7 +177,7 @@ public class MLP extends JFrame {
 					for (int j = 0; j < trainingData[i].length(); j++) {
 						data[j] = (int) (trainingData[i].charAt(j) - '0');
 					}
-					double[] wynik = siec.obliczWyjscie(data);
+					double[] wynik = siec.obliczWyjscie(data, false);
 					int[] znak = { wynik[0] > 0.5 ? 1 : 0, wynik[1] > 0.5 ? 1 : 0, wynik[2] > 0.5 ? 1 : 0 };
 					if (znak[0] == (int) (labels[k - 1].charAt(0) - '0')
 							&& znak[1] == (int) (labels[k - 1].charAt(1) - '0')
@@ -223,7 +223,7 @@ public class MLP extends JFrame {
 		buttonPanel.add(labelLiczbaEpok);
 
 		// ---------------Label
-		labelIloscCU = new JLabel("Ilosc CU:");
+		labelIloscCU = new JLabel("Ilosc CU: ");
 		buttonPanel.add(labelIloscCU);
 
 		add(buttonPanel);
@@ -243,7 +243,7 @@ public class MLP extends JFrame {
 		int outIndex = -1;
 
 		for (int i = 0; i < wejscie.length; i++) {
-			if (wejscie[i] > 0.5) {
+			if (wejscie[i] > 0.6) {
 				outCount++;
 				outIndex = i;
 			}
@@ -345,7 +345,7 @@ public class MLP extends JFrame {
 			ListaMacierzyDouble.add(ListaMacierzy);
 		}
 
-		siec.UczSieZCiagu(ListaMacierzyDouble, ListaLiterekDouble);
+		siec.UczSieZCiagu(ListaMacierzyDouble, ListaLiterekDouble, true);
 	}
 
 	private String[] wczytajPlik(String path) {
