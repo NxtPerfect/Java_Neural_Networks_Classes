@@ -9,7 +9,7 @@ public class Siec {
 	private static final int liczbaEpok = 10000;
 	private static final double EPS = 0.1;
 	private static final double learningRate = 0.1;
-//	private static final double learningRateDecay = 0.995;
+//	private static final double learningRateDecay = 0.98;
 	private static int patience = 50;
 
 	public Siec() {
