@@ -8,7 +8,7 @@ public class Neuron {
 	private double poprzedniaSuma = 0;
 	private double poprzedniaWartosc = 0;
 	private double delta = 0;
-	private double dropoutProbability = 0.1;
+	private double dropoutProbability = 0.4;
 //	private static double eta = 0.1;
 
 	public Neuron() {
@@ -55,8 +55,8 @@ public class Neuron {
 //				fi += wagi[i] * wejscia[i - 1];
 //		}
 		poprzedniaSuma = fi;
-//		poprzedniaWartosc = fAktywacjiReLU(fi);
 		poprzedniaWartosc = fAktywacjiSigma(fi);
+//		poprzedniaWartosc = fAktywacjiReLU(fi);
 		return poprzedniaWartosc;
 	}
 
@@ -93,12 +93,12 @@ public class Neuron {
 		return x > 0 ? 1 : 0;
 	}
 
-	private double fAktywcjiLiniowa(double x) {
+	private double fAktywacjiLiniowa(double x) {
 		return x;
 	}
 
 	private double fPochodnaLiniowa(double x) {
-		return fAktywcjiLiniowa(x);
+		return fAktywacjiLiniowa(x);
 	}
 
 	private double fAktywacjiTanh(double x) {

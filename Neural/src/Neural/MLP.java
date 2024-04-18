@@ -40,10 +40,10 @@ public class MLP extends JFrame {
 	private ArrayList<boolean[]> ciagMacierzy;
 	private int[] ileNeuronowWarstwa;
 	private static final int liczbaLiter = 3; // 3
-	private static final int liczbaWarstw = 4; // 3
+	private static final int liczbaWarstw = 3; // 3
 	private static final int macierzWierszy = 8; // 8
 	private static final int macierzKolumn = 8; // 8
-	private static final int warstwaUkryta = 16; // 10
+	private static final int warstwaUkryta = 10; // 10
 	private int literWZbiorze;
 	private int liczbaPikseli;
 	private Siec siec;
@@ -51,7 +51,7 @@ public class MLP extends JFrame {
 	public MLP(String name) {
 		super(name);
 
-		setTitle("Projekt 1");
+		setTitle(name);
 		setSize(1000, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new GridLayout(1, 1));
@@ -70,9 +70,9 @@ public class MLP extends JFrame {
 		ileNeuronowWarstwa = new int[liczbaWarstw];
 		ileNeuronowWarstwa[0] = macierzKolumn * macierzWierszy;
 		ileNeuronowWarstwa[1] = warstwaUkryta;
-		ileNeuronowWarstwa[2] = warstwaUkryta;
+//		ileNeuronowWarstwa[2] = warstwaUkryta;
 //		ileNeuronowWarstwa[3] = warstwaUkryta;
-		ileNeuronowWarstwa[3] = liczbaLiter;
+		ileNeuronowWarstwa[2] = liczbaLiter;
 		nowaSiec(ileNeuronowWarstwa);
 
 		// Inicjalizacja list
@@ -147,25 +147,17 @@ public class MLP extends JFrame {
 			}
 		});
 
-//		buttonZapiszCT = new JButton("Zapisz ciąg testowy");
-//		buttonPanel.add(buttonZapiszCT);
-//		buttonZapiszCT.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent arg0) {
-//				zapiszCiag(arg0);
-//			}
-//		});
-
 		buttonTest = new JButton("Testuj");
 		buttonPanel.add(buttonTest);
 		buttonTest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				int pktDlaSieci = 0;
-				String[] trainingData = wczytajPlik("src/Neural/ciagTestowy.txt");
+				String[] trainingData = wczytajPlik("src/Neural/ciagTestowy1.txt");
 				String[] labels = new String[Math.round(trainingData.length / 2)];
 
-				double[] data = new double[67];
+//				double[] data = new double[256+3];
+				double[] data = new double[64];
 
 				int k = 0; // Label index
 				for (int i = 2; i < trainingData.length; i++) {
@@ -187,10 +179,9 @@ public class MLP extends JFrame {
 							&& znak[2] == (int) (labels[k - 1].charAt(2) - '0')) {
 						pktDlaSieci++;
 					}
-					System.out.println("Oczekiwany Znak: "
-							+ (labels[k - 1].equals("100") ? "M" : labels[k - 1].equals("010") ? "V" : labels[k - 1].equals("001") ? "W" : "Inny"));
-					System.out.println(
-							"Znak: " + (znak[0] > 0 ? "M" : znak[1] > 0 ? "V" : znak[2] > 0 ? "W" : "Inny"));
+					System.out.println("Oczekiwany Znak: " + (labels[k - 1].equals("100") ? "M"
+							: labels[k - 1].equals("010") ? "V" : labels[k - 1].equals("001") ? "W" : "Inny"));
+					System.out.println("Znak: " + (znak[0] > 0 ? "M" : znak[1] > 0 ? "V" : znak[2] > 0 ? "W" : "Inny"));
 				}
 				double skutecznoscSieci = (double) pktDlaSieci / ((trainingData.length - 2.0) / 2.0) * 100.0;
 				labelSkutecznoscSieci.setText("Skuteczność: " + String.format("%.2f", skutecznoscSieci) + "%");
@@ -278,7 +269,7 @@ public class MLP extends JFrame {
 	// Wczytanie ciągu uczącego z pliku
 	// w folderze src/NazwaProjektu/ciagUczacy.txt
 	private void wczytajPlik(ActionEvent e) {
-		String sciezka = "src/Neural/ciagUczacy.txt";
+		String sciezka = "src/Neural/ciagUczacy1.txt";
 		try {
 			File file = new File(sciezka);
 			if (!file.exists()) {
@@ -329,9 +320,9 @@ public class MLP extends JFrame {
 		ileNeuronowWarstwa = new int[liczbaWarstw];
 		ileNeuronowWarstwa[0] = liczbaPikseli;
 		ileNeuronowWarstwa[1] = warstwaUkryta;
-		ileNeuronowWarstwa[2] = warstwaUkryta;
+//		ileNeuronowWarstwa[2] = warstwaUkryta;
 //		ileNeuronowWarstwa[3] = warstwaUkryta;
-		ileNeuronowWarstwa[3] = literWZbiorze;
+		ileNeuronowWarstwa[2] = literWZbiorze;
 
 		nowaSiec(ileNeuronowWarstwa);
 
@@ -400,15 +391,16 @@ public class MLP extends JFrame {
 			pw.println(ciagMacierzy.get(0).length);
 
 			for (int i = 0; i < ciagLiter.size(); i++) {
-				boolean[] obecnyCiagLiter = ciagLiter.get(i);
+//				boolean[] obecnyCiagLiter = ciagLiter.get(i);
 				boolean[] obecnyCiagMacierz = ciagMacierzy.get(i);
 				StringBuilder sb = new StringBuilder();
-				for (boolean litera : obecnyCiagLiter) {
-					sb.append((litera ? "1" : "0") + " ");
-				}
-
-				pw.println(sb);
-
+//				for (boolean litera : obecnyCiagLiter) {
+////					sb.append((litera ? "1" : "0") + " ");
+//					sb.append(litera ? "1" : "0");
+//				}
+//
+//				pw.println(sb);
+//
 				for (boolean litera : obecnyCiagMacierz) {
 					sb.append((litera ? "1" : "0") + " ");
 				}
