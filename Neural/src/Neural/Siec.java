@@ -10,7 +10,7 @@ public class Siec {
 	private static final double EPS = 0.1;
 	private static final double learningRate = 0.1;
 //	private static final double learningRateDecay = 0.995;
-	private static int patience = 100;
+	private static int patience = 50;
 
 	public Siec() {
 		warstwy = null;
