@@ -8,7 +8,7 @@ public class Neuron {
 	private double poprzedniaSuma = 0;
 	private double poprzedniaWartosc = 0;
 	private double delta = 0;
-	private double dropoutProbability = 0.1;
+	private double dropoutProbability = 0.2;
 //	private static double eta = 0.1;
 
 	public Neuron() {
@@ -53,7 +53,7 @@ public class Neuron {
 //		poprzedniaWartosc = fAktywacjiReLU(fi);
 		poprzedniaWartosc = fAktywacjiSigma(fi);
 //		Random r = new Random();
-//		if (training && r.nextDouble() >= dropoutProbability) { // Apply dropout scaling at training time
+//		if (training && r.nextDouble() <= dropoutProbability) { // Apply dropout scaling at training time
 //			poprzedniaWartosc *= 1.0 - dropoutProbability;
 //		}
 		return poprzedniaWartosc;

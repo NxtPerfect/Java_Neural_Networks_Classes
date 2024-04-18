@@ -6,11 +6,11 @@ import java.util.Collections;
 public class Siec {
 	Warstwa[] warstwy;
 	int liczba_warstw;
-	private static final int liczbaEpok = 200;
+	private static final int liczbaEpok = 10000;
 	private static final double EPS = 0.1;
 	private static final double learningRate = 0.1;
-//	private static final double learningRateDecay = 0.9;
-	private static int attempts = 20;
+//	private static final double learningRateDecay = 0.995;
+	private static int patience = 100;
 
 	public Siec() {
 		warstwy = null;
@@ -48,18 +48,18 @@ public class Siec {
 	void UczSieZCiagu(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe, boolean training) {
 		double obecnyLearningRate = learningRate;
 
-			ArrayList<Integer> indices = new ArrayList<>();
-		    for (int i = 0; i < DaneWejsciowe.size(); i++) {
-		        indices.add(i);
-		    }
+		ArrayList<Integer> indices = new ArrayList<>();
+		for (int i = 0; i < DaneWejsciowe.size(); i++) {
+			indices.add(i);
+		}
+		double lastAverageLoss = 1;
 		for (int epoki = 0; epoki < liczbaEpok; epoki++) {
 			int LPopOdp = 0;
 			double totalLoss = 0;
-			double lastAverageLoss = 1;
 
-		    Collections.shuffle(indices);
+			Collections.shuffle(indices);
 
-		    for (int idx : indices) {
+			for (int idx : indices) {
 //			for (int nrLitery = 0; nrLitery < DaneWejsciowe.size(); nrLitery++) {
 //				double[] Wyjscie = DaneWejsciowe.get(nrLitery);
 //				double[] PopWyjscie = DaneWyjsciowe.get(nrLitery);
@@ -88,17 +88,25 @@ public class Siec {
 			}
 
 			double averageLoss = totalLoss / DaneWejsciowe.size();
-			if (averageLoss > lastAverageLoss) attempts -= 1;
+			if (averageLoss >= lastAverageLoss)
+				patience--;
+			if (LPopOdp >= DaneWejsciowe.size() * 0.9) {
+				patience--;
+			}
 			lastAverageLoss = averageLoss;
 			double accuracy = (double) ((double) LPopOdp / (double) DaneWejsciowe.size()) * 100.0;
 			System.out.println("Epoka: " + epoki + " Loss: " + String.format("%.6f", averageLoss) + " Accuracy: "
 					+ String.format("%.2f", accuracy) + "%");
 			System.out.println(LPopOdp + " / " + DaneWejsciowe.size());
-//			if (LPopOdp == DaneWejsciowe.size() && epoki >= 0.5 * liczbaEpok)
-			if (LPopOdp == DaneWejsciowe.size())
+			if (LPopOdp == DaneWejsciowe.size()) {
+//			if (LPopOdp == DaneWejsciowe.size() || patience == 0) {
+				System.out.println("Avoiding overfitting.");
 				break;
-			if (attempts == 0)
+			}
+			if (patience == 0) {
+				System.out.println("Ran out of patience.");
 				break;
+			}
 			MLP.labelLiczbaEpok.setText("Epoki: " + epoki);
 			MLP.labelIloscCU.setText("Ilosc CU: " + DaneWejsciowe.size());
 //			obecnyLearningRate *= learningRateDecay;
