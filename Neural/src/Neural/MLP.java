@@ -43,7 +43,7 @@ public class MLP extends JFrame {
 	private static final int liczbaWarstw = 4; // 3
 	private static final int macierzWierszy = 8; // 8
 	private static final int macierzKolumn = 8; // 8
-	private static final int warstwaUkryta = 32; // 10
+	private static final int warstwaUkryta = 16; // 10
 	private int literWZbiorze;
 	private int liczbaPikseli;
 	private Siec siec;
