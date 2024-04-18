@@ -40,10 +40,10 @@ public class MLP extends JFrame {
 	private ArrayList<boolean[]> ciagMacierzy;
 	private int[] ileNeuronowWarstwa;
 	private static final int liczbaLiter = 3; // 3
-	private static final int liczbaWarstw = 3; // 3
+	private static final int liczbaWarstw = 4; // 3
 	private static final int macierzWierszy = 8; // 8
 	private static final int macierzKolumn = 8; // 8
-	private static final int warstwaUkryta = 10; // 10
+	private static final int warstwaUkryta = 32; // 10
 	private int literWZbiorze;
 	private int liczbaPikseli;
 	private Siec siec;
@@ -70,7 +70,9 @@ public class MLP extends JFrame {
 		ileNeuronowWarstwa = new int[liczbaWarstw];
 		ileNeuronowWarstwa[0] = macierzKolumn * macierzWierszy;
 		ileNeuronowWarstwa[1] = warstwaUkryta;
-		ileNeuronowWarstwa[2] = liczbaLiter;
+		ileNeuronowWarstwa[2] = warstwaUkryta;
+//		ileNeuronowWarstwa[3] = warstwaUkryta;
+		ileNeuronowWarstwa[3] = liczbaLiter;
 		nowaSiec(ileNeuronowWarstwa);
 
 		// Inicjalizacja list
@@ -104,6 +106,7 @@ public class MLP extends JFrame {
 		});
 
 		buttonUczSiec = new JButton("Ucz Sieć");
+//		buttonUczSiec.setEnabled(false); // do dodawania do ciagu
 		buttonPanel.add(buttonUczSiec);
 		buttonUczSiec.addActionListener(new ActionListener() {
 			@Override
@@ -184,8 +187,10 @@ public class MLP extends JFrame {
 							&& znak[2] == (int) (labels[k - 1].charAt(2) - '0')) {
 						pktDlaSieci++;
 					}
-//					System.out.println("Znak: " + znak[0] + znak[1] + znak[2]);
-//					System.out.println("Oczekiwany Znak: " + labels[k - 1]);
+					System.out.println("Oczekiwany Znak: "
+							+ (labels[k - 1].equals("100") ? "M" : labels[k - 1].equals("010") ? "V" : labels[k - 1].equals("001") ? "W" : "Inny"));
+					System.out.println(
+							"Znak: " + (znak[0] > 0 ? "M" : znak[1] > 0 ? "V" : znak[2] > 0 ? "W" : "Inny"));
 				}
 				double skutecznoscSieci = (double) pktDlaSieci / ((trainingData.length - 2.0) / 2.0) * 100.0;
 				labelSkutecznoscSieci.setText("Skuteczność: " + String.format("%.2f", skutecznoscSieci) + "%");
@@ -243,7 +248,7 @@ public class MLP extends JFrame {
 		int outIndex = -1;
 
 		for (int i = 0; i < wejscie.length; i++) {
-			if (wejscie[i] > 0.6) {
+			if (wejscie[i] > 0.5) {
 				outCount++;
 				outIndex = i;
 			}
@@ -262,7 +267,11 @@ public class MLP extends JFrame {
 			labelRozpoznanyZnak.setText("Rozpoznany znak to: V");
 			return;
 		}
-		labelRozpoznanyZnak.setText("Rozpoznany znak to: W");
+		if (outIndex == 2) {
+			labelRozpoznanyZnak.setText("Rozpoznany znak to: W");
+			return;
+		}
+		labelRozpoznanyZnak.setText("Rozpoznany znak to: inny");
 		return;
 	}
 
@@ -320,7 +329,9 @@ public class MLP extends JFrame {
 		ileNeuronowWarstwa = new int[liczbaWarstw];
 		ileNeuronowWarstwa[0] = liczbaPikseli;
 		ileNeuronowWarstwa[1] = warstwaUkryta;
-		ileNeuronowWarstwa[2] = literWZbiorze;
+		ileNeuronowWarstwa[2] = warstwaUkryta;
+//		ileNeuronowWarstwa[3] = warstwaUkryta;
+		ileNeuronowWarstwa[3] = literWZbiorze;
 
 		nowaSiec(ileNeuronowWarstwa);
 
@@ -389,19 +400,23 @@ public class MLP extends JFrame {
 			pw.println(ciagMacierzy.get(0).length);
 
 			for (int i = 0; i < ciagLiter.size(); i++) {
-				boolean[] litera = ciagLiter.get(i);
-				boolean[] macierz = ciagMacierzy.get(i);
+				boolean[] obecnyCiagLiter = ciagLiter.get(i);
+				boolean[] obecnyCiagMacierz = ciagMacierzy.get(i);
 				StringBuilder sb = new StringBuilder();
-				for (int j = 0; j < litera.length; j++) {
-					sb.append((litera[j] ? "1" : "0") + " ");
+				for (boolean litera : obecnyCiagLiter) {
+					sb.append((litera ? "1" : "0") + " ");
 				}
+
 				pw.println(sb);
-				for (int j = 0; j < macierz.length; j++) {
-					sb.append((macierz[j] ? "1" : "0") + " ");
+
+				for (boolean litera : obecnyCiagMacierz) {
+					sb.append((litera ? "1" : "0") + " ");
 				}
 				pw.println(sb);
 			}
 			pw.close();
+			ciagMacierzy = new ArrayList<boolean[]>();
+			ciagLiter = new ArrayList<boolean[]>();
 			JOptionPane.showMessageDialog(null, "Sukces zapisu pliku.", "Sukces", JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception ex) {
 			System.err.println(ex);
