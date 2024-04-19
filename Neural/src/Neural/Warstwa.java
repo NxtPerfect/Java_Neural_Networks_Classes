@@ -47,4 +47,5 @@ public class Warstwa {
 		for (int i = 0; i < neurony.length; i++)
 			neurony[i].zmienWagi(PopWejscie, eps);
 	}
+
 }
