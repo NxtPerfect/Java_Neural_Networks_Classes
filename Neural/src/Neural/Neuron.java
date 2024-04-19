@@ -46,8 +46,8 @@ public class Neuron {
 			fi += wagi[i] * wejscia[i - 1];
 		}
 		poprzedniaSuma = fi;
-		poprzedniaWartosc = fAktywacjiSigma(fi);
-//		poprzedniaWartosc = fAktywacjiReLU(fi);
+//		poprzedniaWartosc = fAktywacjiSigma(fi);
+		poprzedniaWartosc = fAktywacjiReLU(fi);
 //		poprzedniaWartosc = fAktywacjiLeakyReLU(fi);
 		return poprzedniaWartosc;
 	}
@@ -112,12 +112,12 @@ public class Neuron {
 
 	public void zmienWagi(double[] wejscie, double eta) {
 //		eta = 0.1;
-		wagi[0] = eta * delta * fPochodnaSigma(poprzedniaSuma);
-//		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
+//		wagi[0] = eta * delta * fPochodnaSigma(poprzedniaSuma);
+		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
 //		wagi[0] = eta * delta * fPochodnaLeakyReLU(poprzedniaSuma);
 		for (int i = 1; i < wagi.length; i++) {
-			wagi[i] += eta * delta * fPochodnaSigma(poprzedniaSuma) * wejscie[i - 1];
-//			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
+//			wagi[i] += eta * delta * fPochodnaSigma(poprzedniaSuma) * wejscie[i - 1];
+			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
 //			wagi[i] += eta * delta * fPochodnaLeakyReLU(poprzedniaSuma) * wejscie[i - 1];
 		}
 		delta = 0.0;
