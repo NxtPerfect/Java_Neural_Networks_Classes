@@ -8,7 +8,7 @@ public class Neuron {
 	private double poprzedniaSuma = 0;
 	private double poprzedniaWartosc = 0;
 	private double delta = 0;
-	private double dropoutProbability = 0.4;
+	private double dropoutProbability = 0.1;
 	private final double ALPHA = 0.01; // You need the same slope value
 	private final double ALPHAELU = 1.0; // You can adjust this ALPHAELU parameter
 //	private static double eta = 0.1;
@@ -45,20 +45,9 @@ public class Neuron {
 			}
 			fi += wagi[i] * wejscia[i - 1];
 		}
-//		if (!training) {
-//			Random r = new Random();
-//			for (int i = 1; i <= liczba_wejsc; i++) {
-//				if (r.nextDouble() >= dropoutProbability) { // If neuron is dropped out
-//					fi += wagi[i] * wejscia[i - 1]; // Neuron output is set to 0
-//				}
-//			}
-//		} else {
-//			for (int i = 1; i <= liczba_wejsc; i++)
-//				fi += wagi[i] * wejscia[i - 1];
-//		}
 		poprzedniaSuma = fi;
-//		poprzedniaWartosc = fAktywacjiSigma(fi);
-		poprzedniaWartosc = fAktywacjiReLU(fi);
+		poprzedniaWartosc = fAktywacjiSigma(fi);
+//		poprzedniaWartosc = fAktywacjiReLU(fi);
 //		poprzedniaWartosc = fAktywacjiLeakyReLU(fi);
 		return poprzedniaWartosc;
 	}
@@ -71,16 +60,66 @@ public class Neuron {
 		return delta * wagi[n];
 	}
 
+	public void updateWeightsAdam(double[] wejscie, double[] m, double[] v, int t, double beta1,
+			double beta2, double learningRate, double epsilon) {
+		// Initialize moment estimates and timestamp
+		if (m == null || v == null) {
+			m = new double[wagi.length];
+			v = new double[wagi.length];
+			t = 0;
+		}
+
+		// Update timestamp
+		t++;
+
+		m[0] = beta1 * m[0] + (1 - beta1);
+		// Update biased first moment estimate
+		for (int i = 1; i < wagi.length; i++) {
+			m[i] = beta1 * m[i] + (1 - beta1) * wejscie[i -1];
+		}
+
+		v[0] = beta2 * v[0] + (1 - beta2);
+		// Update biased second moment estimate
+		for (int i = 1; i < wagi.length; i++) {
+			v[i] = beta2 * v[i] + (1 - beta2) * wejscie[i - 1] * wejscie[i - 1];
+		}
+
+		// Correct bias in moment estimates
+		double[] mCorrected = new double[wagi.length];
+		double[] vCorrected = new double[wagi.length];
+		for (int i = 0; i < wagi.length; i++) {
+			mCorrected[i] = m[i] / (1 - Math.pow(beta1, t));
+			vCorrected[i] = v[i] / (1 - Math.pow(beta2, t));
+		}
+
+		// Update weights
+		for (int i = 0; i < wagi.length; i++) {
+			wagi[i] -= learningRate * mCorrected[i] / (Math.sqrt(vCorrected[i]) + epsilon);
+		}
+	}
+
+	public void zmienWagi(double[] wejscie, double eta, double lambda) {
+		wagi[0] += eta * delta * fPochodnaReLU(poprzedniaSuma);
+		for (int i = 1; i < wagi.length; i++) {
+			double gradient = delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
+			double regularizationTerm = lambda * Math.signum(wagi[i]);
+			wagi[i] += eta * (gradient + regularizationTerm);
+		}
+		delta = 0.0;
+		poprzedniaSuma = 0;
+		poprzedniaWartosc = 0;
+	}
+
 	public void zmienWagi(double[] wejscie, double eta) {
 //		eta = 0.1;
-//		wagi[0] = eta * delta * fPochodnaSigma(poprzedniaSuma);
-		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
+		wagi[0] = eta * delta * fPochodnaSigma(poprzedniaSuma);
+//		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
 //		wagi[0] = eta * delta * fPochodnaLeakyReLU(poprzedniaSuma);
-		for (int i = 1; i < wagi.length; i++)
-//			wagi[i] += eta * delta * fPochodnaSigma(poprzedniaSuma) * wejscie[i - 1];
-			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
+		for (int i = 1; i < wagi.length; i++) {
+			wagi[i] += eta * delta * fPochodnaSigma(poprzedniaSuma) * wejscie[i - 1];
+//			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
 //			wagi[i] += eta * delta * fPochodnaLeakyReLU(poprzedniaSuma) * wejscie[i - 1];
-
+		}
 		delta = 0.0;
 		poprzedniaSuma = 0;
 		poprzedniaWartosc = 0;
@@ -125,19 +164,19 @@ public class Neuron {
 
 	// Leaky ReLU
 	private double fAktywacjiLeakyReLU(double x) {
-	    return x >= 0 ? x : ALPHA * x;
+		return x >= 0 ? x : ALPHA * x;
 	}
 
 	private double fPochodnaLeakyReLU(double x) {
-	    return x >= 0 ? 1 : ALPHA;
+		return x >= 0 ? 1 : ALPHA;
 	}
 
 	// ELU
 	private double fAktywacjiELU(double x) {
-	    return x >= 0 ? x : ALPHAELU * (Math.exp(x) - 1);
+		return x >= 0 ? x : ALPHAELU * (Math.exp(x) - 1);
 	}
 
 	private double fPochodnaELU(double x) {
-	    return x >= 0 ? 1 : ALPHAELU * Math.exp(x);
+		return x >= 0 ? 1 : ALPHAELU * Math.exp(x);
 	}
 }

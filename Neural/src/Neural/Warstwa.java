@@ -43,6 +43,17 @@ public class Warstwa {
 		}
 	}
 
+	public void zmienWagi(double eps, double[] m, double[] v, int t, double beta1,
+			double beta2, double learningRate, double epsilon) {
+		for (int i = 0; i < neurony.length; i++)
+			neurony[i].updateWeightsAdam(PopWejscie, m, v, t, beta1, beta2, learningRate, epsilon);
+	}
+
+	public void zmienWagi(double eps, double lambda) {
+		for (int i = 0; i < neurony.length; i++)
+			neurony[i].zmienWagi(PopWejscie, eps, lambda);
+	}
+
 	public void zmienWagi(double eps) {
 		for (int i = 0; i < neurony.length; i++)
 			neurony[i].zmienWagi(PopWejscie, eps);
