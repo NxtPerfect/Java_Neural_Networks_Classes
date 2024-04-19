@@ -190,10 +190,13 @@ public class MLP extends JFrame {
 					labelSkutecznoscSieci.setForeground(Color.RED);
 					return;
 				}
+				labelSkutecznoscSieci.setForeground(Color.BLACK);
 				if (skutecznoscSieci > 75.0) {
 					labelSkutecznoscSieci.setForeground(Color.GREEN);
 					return;
 				}
+				ciagLiter.clear();
+				ciagMacierzy.clear();
 			}
 		});
 
@@ -361,7 +364,6 @@ public class MLP extends JFrame {
 
 	private String[] wczytajPlik(String path) {
 		File file = new File(path);
-		String[] wynik;
 		if (!file.exists()) {
 			return null;
 		}
@@ -400,16 +402,16 @@ public class MLP extends JFrame {
 			pw.println(ciagMacierzy.get(0).length);
 
 			for (int i = 0; i < ciagLiter.size(); i++) {
-//				boolean[] obecnyCiagLiter = ciagLiter.get(i);
+				boolean[] obecnyCiagLiter = ciagLiter.get(i);
 				boolean[] obecnyCiagMacierz = ciagMacierzy.get(i);
 				StringBuilder sb = new StringBuilder();
-//				for (boolean litera : obecnyCiagLiter) {
-////					sb.append((litera ? "1" : "0") + " ");
+				for (boolean litera : obecnyCiagLiter) {
+					sb.append((litera ? "1" : "0") + " ");
 //					sb.append(litera ? "1" : "0");
-//				}
-//
-//				pw.println(sb);
-//
+				}
+
+				sb.append("\n");
+
 				for (boolean litera : obecnyCiagMacierz) {
 					sb.append((litera ? "1" : "0") + " ");
 				}
