@@ -8,9 +8,9 @@ public class Siec {
 	int liczba_warstw;
 	private static final int liczbaEpok = 10000;
 	private static final double EPS = 0.1;
-	private static final double learningRate = 0.1;
-//	private static final double learningRateDecay = 0.98;
-	private static int patience = 50;
+	private static final double learningRate = 0.001;
+	private static final double learningRateDecay = 0.99;
+	private static int patience = 500;
 
 	public Siec() {
 		warstwy = null;
@@ -88,10 +88,13 @@ public class Siec {
 			}
 
 			double averageLoss = totalLoss / DaneWejsciowe.size();
-			if (averageLoss >= lastAverageLoss)
+			if (averageLoss >= lastAverageLoss) {
 				patience--;
+				System.out.println("Lost patience: " + patience);
+			}
 			if (LPopOdp >= DaneWejsciowe.size() * 0.9) {
 				patience--;
+				System.out.println("Lost patience: " + patience);
 			}
 			lastAverageLoss = averageLoss;
 			double accuracy = (double) ((double) LPopOdp / (double) DaneWejsciowe.size()) * 100.0;
@@ -103,7 +106,7 @@ public class Siec {
 				System.out.println("Avoiding overfitting.");
 				break;
 			}
-			if (patience == 0) {
+			if (patience <= 0) {
 				System.out.println("Ran out of patience.");
 				break;
 			}
@@ -113,4 +116,5 @@ public class Siec {
 		}
 	}
 
+	
 }

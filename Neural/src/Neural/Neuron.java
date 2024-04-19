@@ -9,6 +9,8 @@ public class Neuron {
 	private double poprzedniaWartosc = 0;
 	private double delta = 0;
 	private double dropoutProbability = 0.4;
+	private final double ALPHA = 0.01; // You need the same slope value
+	private final double ALPHAELU = 1.0; // You can adjust this ALPHAELU parameter
 //	private static double eta = 0.1;
 
 	public Neuron() {
@@ -55,8 +57,9 @@ public class Neuron {
 //				fi += wagi[i] * wejscia[i - 1];
 //		}
 		poprzedniaSuma = fi;
-		poprzedniaWartosc = fAktywacjiSigma(fi);
-//		poprzedniaWartosc = fAktywacjiReLU(fi);
+//		poprzedniaWartosc = fAktywacjiSigma(fi);
+		poprzedniaWartosc = fAktywacjiReLU(fi);
+//		poprzedniaWartosc = fAktywacjiLeakyReLU(fi);
 		return poprzedniaWartosc;
 	}
 
@@ -70,11 +73,13 @@ public class Neuron {
 
 	public void zmienWagi(double[] wejscie, double eta) {
 //		eta = 0.1;
-		wagi[0] = eta * delta * fPochodnaSigma(poprzedniaSuma);
-//		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
+//		wagi[0] = eta * delta * fPochodnaSigma(poprzedniaSuma);
+		wagi[0] = eta * delta * fPochodnaReLU(poprzedniaSuma);
+//		wagi[0] = eta * delta * fPochodnaLeakyReLU(poprzedniaSuma);
 		for (int i = 1; i < wagi.length; i++)
-			wagi[i] += eta * delta * fPochodnaSigma(poprzedniaSuma) * wejscie[i - 1];
-//			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
+//			wagi[i] += eta * delta * fPochodnaSigma(poprzedniaSuma) * wejscie[i - 1];
+			wagi[i] += eta * delta * fPochodnaReLU(poprzedniaSuma) * wejscie[i - 1];
+//			wagi[i] += eta * delta * fPochodnaLeakyReLU(poprzedniaSuma) * wejscie[i - 1];
 
 		delta = 0.0;
 		poprzedniaSuma = 0;
@@ -116,5 +121,23 @@ public class Neuron {
 
 	private double fPochodnaReLU(double x) {
 		return x > 0 ? 1 : 0;
+	}
+
+	// Leaky ReLU
+	private double fAktywacjiLeakyReLU(double x) {
+	    return x >= 0 ? x : ALPHA * x;
+	}
+
+	private double fPochodnaLeakyReLU(double x) {
+	    return x >= 0 ? 1 : ALPHA;
+	}
+
+	// ELU
+	private double fAktywacjiELU(double x) {
+	    return x >= 0 ? x : ALPHAELU * (Math.exp(x) - 1);
+	}
+
+	private double fPochodnaELU(double x) {
+	    return x >= 0 ? 1 : ALPHAELU * Math.exp(x);
 	}
 }

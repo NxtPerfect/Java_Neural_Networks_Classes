@@ -1,5 +1,6 @@
 package Neural;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -185,6 +186,14 @@ public class MLP extends JFrame {
 				}
 				double skutecznoscSieci = (double) pktDlaSieci / ((trainingData.length - 2.0) / 2.0) * 100.0;
 				labelSkutecznoscSieci.setText("Skuteczność: " + String.format("%.2f", skutecznoscSieci) + "%");
+				if (String.format("%.2f", skutecznoscSieci).equals("36.11") || skutecznoscSieci < 50.0) {
+					labelSkutecznoscSieci.setForeground(Color.RED);
+					return;
+				}
+				if (skutecznoscSieci > 75.0) {
+					labelSkutecznoscSieci.setForeground(Color.GREEN);
+					return;
+				}
 			}
 		});
 
