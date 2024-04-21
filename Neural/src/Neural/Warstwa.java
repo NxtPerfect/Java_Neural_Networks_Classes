@@ -2,61 +2,50 @@ package Neural;
 
 public class Warstwa {
 	Neuron[] neurony;
-	int liczba_neuronow;
+	int liczbaNeuronow;
 	double[] PopWejscie;
 
 	public Warstwa() {
 		neurony = null;
-		liczba_neuronow = 0;
+		liczbaNeuronow = 0;
 	}
 
 	public Warstwa(int liczba_wejsc, int liczba_neuronow) {
-		this.liczba_neuronow = liczba_neuronow;
+		this.liczbaNeuronow = liczba_neuronow;
 		neurony = new Neuron[liczba_neuronow];
 		for (int i = 0; i < liczba_neuronow; i++)
 			neurony[i] = new Neuron(liczba_wejsc);
 	}
 
-	double[] obliczWyjscie(double[] wejscie, boolean training) {
+	double[] ObliczWyjscie(double[] wejscie) {
 		PopWejscie = wejscie;
-		double[] wyjscie = new double[liczba_neuronow];
-		for (int i = 0; i < liczba_neuronow; i++)
-			wyjscie[i] = neurony[i].obliczWyjscie(wejscie, training);
+		double[] wyjscie = new double[liczbaNeuronow];
+		for (int i = 0; i < liczbaNeuronow; i++)
+			wyjscie[i] = neurony[i].ObliczWyjscie(wejscie);
 		return wyjscie;
 	}
 
-	public double[] obliczDolnaWarstwaDelta() {
-		int LicznikNeuronowDolnejWar = neurony[0].liczbaWejsc();
+	public double[] ObliczDolnaWarstwaDelta() {
+		int LicznikNeuronowDolnejWar = neurony[0].LiczbaWejsc();
 		double[] delta = new double[LicznikNeuronowDolnejWar];
 
 		for (int i = 0; i < LicznikNeuronowDolnejWar; i++) {
 			for (int j = 0; j < neurony.length; j++) {
-				delta[i] += neurony[j].deltaRazyWagi(i);
+				delta[i] += neurony[j].DeltaRazyWagi(i);
 			}
 		}
 		return delta;
 	}
 
-	public void ustawDelteWNeuronach(double[] delta) {
+	public void UstawDeleteWNeuronach(double[] delta) {
 		for (int i = 0; i < delta.length; i++) {
-			neurony[i].ustawDelte(delta[i]);
+			neurony[i].UstawDelte(delta[i]);
 		}
 	}
 
-	public void zmienWagi(double eps, double[] m, double[] v, int t, double beta1,
-			double beta2, double learningRate, double epsilon) {
+	public void ZmienWagi() {
 		for (int i = 0; i < neurony.length; i++)
-			neurony[i].updateWeightsAdam(PopWejscie, m, v, t, beta1, beta2, learningRate, epsilon);
-	}
-
-	public void zmienWagi(double eps, double lambda) {
-		for (int i = 0; i < neurony.length; i++)
-			neurony[i].zmienWagi(PopWejscie, eps, lambda);
-	}
-
-	public void zmienWagi(double eps) {
-		for (int i = 0; i < neurony.length; i++)
-			neurony[i].zmienWagi(PopWejscie, eps);
+			neurony[i].ZmienWagi(PopWejscie);
 	}
 
 }
