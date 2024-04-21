@@ -2,209 +2,121 @@ package Neural;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ArrayList;
 
 public class Siec {
-	Warstwa[] warstwy;
-	int liczba_warstw;
-	private static final int liczbaEpok = 10000;
-	private static final double EPS = 0.1;
-	private static final double learningRate = 0.01;
-	private static final double lambda = 0.0001;
-	private static int patience = 400;
 
-	// Adam
-	private double beta1 = 0.9; // Exponential decay rates for moment estimates
-	private double beta2 = 0.999;
-	private double epsilon = 1e-8;
-	private double[] m; // First moment estimate
-	private double[] v; // Second moment estimate
-	private int t = 0; // Timestamp
+	static Warstwa[] warstwy;
+	static int liczbaWarstw;
+	private static final int MaksLiczbaEpok = 12000;
+	private static final double MarginesBledu = 0.2; // Maksymalny margines błędu
+	private static int patience = 100; // Cierpliwość sieci, po dojściu do zera przerywa trenowanie
 
 	public Siec() {
 		warstwy = null;
-		this.liczba_warstw = 0;
 	}
 
 	public Siec(int liczba_wejsc, int liczba_warstw, int[] lnww) {
-		this.liczba_warstw = liczba_warstw;
+		this.liczbaWarstw = liczba_warstw;
 		warstwy = new Warstwa[liczba_warstw];
 		for (int i = 0; i < liczba_warstw; i++)
 			warstwy[i] = new Warstwa((i == 0) ? liczba_wejsc : lnww[i - 1], lnww[i]);
-		m = new double[liczba_wejsc + 1];
-		v = new double[liczba_wejsc + 1];
 	}
 
-	double[] obliczWyjscie(double[] wejscie, boolean training) {
+	// Oblicza wyjście warstwy
+	double[] ObliczWyjscie(double[] wejscie) {
 		double[] wyjscie = null;
-		for (int i = 0; i < liczba_warstw; i++)
-			wejscie = wyjscie = warstwy[i].obliczWyjscie(wejscie, training);
+		for (int i = 0; i < liczbaWarstw; i++)
+			wejscie = wyjscie = warstwy[i].ObliczWyjscie(wejscie);
 		return wyjscie;
 	}
 
-	private double computeMSE(double[] predicted, double[] actual) {
-		if (predicted.length != actual.length) {
-			throw new IllegalArgumentException("Arrays must have the same length");
-		}
+	// Trenuje sieć
+	void Trenuj(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe) {
+		int OstatniaLiczbaPopOdp = 0;
+		ArrayList<Integer> litery = new ArrayList<Integer>();
 
-		double sum = 0.0;
-		for (int i = 0; i < predicted.length; i++) {
-			double error = predicted[i] - actual[i];
-			sum += error * error; // Squaring the error
-		}
+		// Dodaj liczby od 0 do wielkości danych wejściowych
+		// wykorzystuje to do losowania danych wejściowych
+		// aby wymieszać dane wejściowe dla każdej epoki
+		// w celu zapobiegnięcia overfittingu
+		for (int i = 0; i < DaneWejsciowe.size(); i++)
+			litery.add(i);
 
-		return sum / predicted.length; // Computing the average
-	}
+		for (int epoki = 0; epoki < MaksLiczbaEpok; epoki++) {
+			int LiczbaPopOdp = 0;
 
-	void UczSieZCiaguLambda(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe, boolean training) {
-		double bestLambda = 0.0;
-		double bestValidationLoss = Double.MAX_VALUE;
-
-		// Define range of lambda values
-		double[] lambdaValues = { 0.001, 0.01, 0.1, 1.0, 10.0 }; // Example values, adjust as needed
-		double averageLoss = 0;
-
-		for (double lambda : lambdaValues) {
-			double obecnyLearningRate = learningRate;
-
-			ArrayList<Integer> indices = new ArrayList<>();
-			for (int i = 0; i < DaneWejsciowe.size(); i++) {
-				indices.add(i);
-			}
-			double lastAverageLoss = 1;
-			for (int epoki = 0; epoki < liczbaEpok; epoki++) {
-				int LPopOdp = 0;
-				double totalLoss = 0;
-
-				Collections.shuffle(indices);
-
-				for (int idx : indices) {
-					double[] Wyjscie = DaneWejsciowe.get(idx);
-					double[] PopWyjscie = DaneWyjsciowe.get(idx);
-					double delta[] = new double[PopWyjscie.length];
-					for (int i = 0; i < liczba_warstw; i++)
-						Wyjscie = warstwy[i].obliczWyjscie(Wyjscie, training);
-
-					double loss = computeMSE(Wyjscie, PopWyjscie);
-					totalLoss += loss;
-
-					boolean CzyBlisko = true;
-					for (int i = 0; i < Wyjscie.length; i++)
-						if (Math.abs(delta[i] = (PopWyjscie[i] - Wyjscie[i])) > EPS)
-							CzyBlisko = false;
-					if (CzyBlisko)
-						LPopOdp++;
-					for (int i = warstwy.length - 1; i > 0; i--) {
-						warstwy[i].ustawDelteWNeuronach(delta);
-						delta = warstwy[i].obliczDolnaWarstwaDelta();
-					}
-					warstwy[0].ustawDelteWNeuronach(delta);
-					for (int i = 0; i < warstwy.length; i++)
-						warstwy[i].zmienWagi(obecnyLearningRate, lambda);
-				}
-
-				averageLoss = totalLoss / DaneWejsciowe.size();
-				if (averageLoss >= lastAverageLoss) {
-					patience--;
-					System.out.println("Lost patience: " + patience);
-				}
-				if (LPopOdp >= DaneWejsciowe.size() * 0.9) {
-					patience--;
-					System.out.println("Lost patience: " + patience);
-				}
-				lastAverageLoss = averageLoss;
-				double accuracy = (double) ((double) LPopOdp / (double) DaneWejsciowe.size()) * 100.0;
-				System.out.println("Epoka: " + epoki + " Loss: " + String.format("%.6f", averageLoss) + " Accuracy: "
-						+ String.format("%.2f", accuracy) + "%");
-				System.out.println(LPopOdp + " / " + DaneWejsciowe.size());
-				if (LPopOdp == DaneWejsciowe.size()) {
-					System.out.println("Avoiding overfitting.");
-					break;
-				}
-				if (patience <= 0) {
-					System.out.println("Ran out of patience.");
-					break;
-				}
-				MLP.labelLiczbaEpok.setText("Epoki: " + epoki);
-				MLP.labelIloscCU.setText("Ilosc CU: " + DaneWejsciowe.size());
-//			obecnyLearningRate *= learningRateDecay;
-			}
-			if (averageLoss < bestValidationLoss) {
-				bestValidationLoss = averageLoss;
-				bestLambda = lambda;
-			}
-		}
-		System.out.println("Best loss: " + bestValidationLoss + "for lambda: " + bestLambda);
-	}
-
-	void UczSieZCiagu(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe, boolean training) {
-		double obecnyLearningRate = learningRate;
-
-		ArrayList<Integer> indices = new ArrayList<>();
-		for (int i = 0; i < DaneWejsciowe.size(); i++) {
-			indices.add(i);
-		}
-		double lastAverageLoss = 1;
-		for (int epoki = 0; epoki < liczbaEpok; epoki++) {
-			int LPopOdp = 0;
-			double totalLoss = 0;
-
-			Collections.shuffle(indices);
-
-			for (int idx : indices) {
-				double[] Wyjscie = DaneWejsciowe.get(idx);
-				double[] PopWyjscie = DaneWyjsciowe.get(idx);
+			// Przemieszaj dane wejściowe
+			Collections.shuffle(litery);
+			for (int nrLitery : litery) {
+				double[] Wyjscie = DaneWejsciowe.get(nrLitery);
+				double[] PopWyjscie = DaneWyjsciowe.get(nrLitery);
 				double delta[] = new double[PopWyjscie.length];
-				for (int i = 0; i < liczba_warstw; i++)
-					Wyjscie = warstwy[i].obliczWyjscie(Wyjscie, training);
-
-				double loss = computeMSE(Wyjscie, PopWyjscie);
-				totalLoss += loss;
+				for (int i = 0; i < liczbaWarstw; i++)
+					Wyjscie = warstwy[i].ObliczWyjscie(Wyjscie);
 
 				boolean CzyBlisko = true;
 				for (int i = 0; i < Wyjscie.length; i++)
-					if (Math.abs(delta[i] = (PopWyjscie[i] - Wyjscie[i])) > EPS)
+					// Jeśli delta była większe niż marginesBledu, to nie jest blisko
+					if (Math.abs(delta[i] = (PopWyjscie[i] - Wyjscie[i])) > MarginesBledu)
 						CzyBlisko = false;
-				if (CzyBlisko)
-					LPopOdp++;
-				for (int i = warstwy.length - 1; i > 0; i--) {
-					warstwy[i].ustawDelteWNeuronach(delta);
-					delta = warstwy[i].obliczDolnaWarstwaDelta();
-				}
-				warstwy[0].ustawDelteWNeuronach(delta);
-				for (int i = 0; i < warstwy.length; i++)
-					warstwy[i].zmienWagi(obecnyLearningRate);
-//					warstwy[i].zmienWagi(obecnyLearningRate, m, v, t, beta1, beta2, learningRate, epsilon);
-			}
 
-			double averageLoss = totalLoss / DaneWejsciowe.size();
-			if (averageLoss >= lastAverageLoss) {
+				// Jeśli blisko ++
+				// inaczej 0
+				LiczbaPopOdp += CzyBlisko ? 1 : 0;
+				for (int i = warstwy.length - 1; i > 0; i--) {
+					warstwy[i].UstawDeleteWNeuronach(delta);
+					delta = warstwy[i].ObliczDolnaWarstwaDelta();
+				}
+				warstwy[0].UstawDeleteWNeuronach(delta);
+				for (int i = 0; i < warstwy.length; i++)
+					warstwy[i].ZmienWagi();
+			}
+			System.out.println("Poprawne/wszystkie: " + LiczbaPopOdp + "/" + DaneWejsciowe.size() + " Celność: "
+					+ String.format("%.2f", ((double) LiczbaPopOdp / (double) DaneWejsciowe.size()) * 100.0)
+					+ "% Epoka: " + epoki);
+			if (LiczbaPopOdp <= OstatniaLiczbaPopOdp)
 				patience--;
-//				System.out.println("Lost patience: " + patience);
-			}
-			if (LPopOdp >= DaneWejsciowe.size() * 0.9) {
-				patience--;
-//				System.out.println("Lost patience: " + patience);
-			}
-			lastAverageLoss = averageLoss;
-			double accuracy = (double) ((double) LPopOdp / (double) DaneWejsciowe.size()) * 100.0;
-//			if (epoki % 100 == 0) {
-			System.out.println("Epoka: " + epoki + " Loss: " + String.format("%.6f", averageLoss) + " Accuracy: "
-					+ String.format("%.2f", accuracy) + "%");
-			System.out.println(LPopOdp + " / " + DaneWejsciowe.size());
-//			}
-			if (LPopOdp == DaneWejsciowe.size()) {
-//			if (LPopOdp == DaneWejsciowe.size() || patience == 0) {
-				System.out.println("Avoiding overfitting.");
+			if (LiczbaPopOdp == DaneWejsciowe.size() || patience <= 0)
 				break;
-			}
-			if (patience <= 0) {
-				System.out.println("Ran out of patience.");
-				break;
-			}
-			MLP.labelLiczbaEpok.setText("Epoki: " + epoki);
-			MLP.labelIloscCU.setText("Ilosc CU: " + DaneWejsciowe.size());
-//			obecnyLearningRate *= learningRateDecay;
+			Test1.labelLiczbaEpok.setText("Liczba Epok Trenowania: " + epoki);
+			OstatniaLiczbaPopOdp = LiczbaPopOdp;
 		}
 	}
 
+//	void Trenuj(ArrayList<double[]> DaneWejsciowe, ArrayList<double[]> DaneWyjsciowe) {
+//		int OstatniaLiczbaPopOdp = 0;
+//		for (int epoki = 0; epoki < MaksLiczbaEpok; epoki++) {
+//			int LiczbaPopOdp = 0;
+//
+//			for (int nrLitery = 0; nrLitery < DaneWejsciowe.size(); nrLitery++) {
+//				double[] Wyjscie = DaneWejsciowe.get(nrLitery);
+//				double[] PopWyjscie = DaneWyjsciowe.get(nrLitery);
+//				double delta[] = new double[PopWyjscie.length];
+//				for (int i = 0; i < liczbaWarstw; i++)
+//					Wyjscie = warstwy[i].ObliczWyjscie(Wyjscie);
+//
+//				boolean CzyBlisko = true;
+//				for (int i = 0; i < Wyjscie.length; i++)
+//					if (Math.abs(delta[i] = (PopWyjscie[i] - Wyjscie[i])) > MarginesBledu)
+//						CzyBlisko = false;
+//				if (CzyBlisko)
+//					LiczbaPopOdp++;
+//				for (int i = warstwy.length - 1; i > 0; i--) {
+//					warstwy[i].UstawDeleteWNeuronach(delta);
+//					delta = warstwy[i].ObliczDolnaWarstwaDelta();
+//				}
+//				warstwy[0].UstawDeleteWNeuronach(delta);
+//				for (int i = 0; i < warstwy.length; i++)
+//					warstwy[i].ZmienWagi();
+//			}
+//			System.out.println(LiczbaPopOdp + "/" + DaneWejsciowe.size() + " " + String.format("%.2f",((double) LiczbaPopOdp / (double) DaneWejsciowe.size()) * 100.0) + "% " + epoki);
+//			if (LiczbaPopOdp <= OstatniaLiczbaPopOdp)
+//				patience--;
+//			if (LiczbaPopOdp == DaneWejsciowe.size() || patience <= 0)
+//				break;
+//			Test1.labelLiczbaEpok.setText("Liczba Epok Trenowania: " + epoki);
+//			OstatniaLiczbaPopOdp = LiczbaPopOdp;
+//		}
+//	}
 }
