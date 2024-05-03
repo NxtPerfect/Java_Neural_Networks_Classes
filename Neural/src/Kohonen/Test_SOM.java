@@ -32,7 +32,7 @@ public class Test_SOM extends JFrame {
 
 			Vec2D wejscia = new Vec2D(a, b);
 
-			som.ucz2(wejscia);
+			som.ucz(wejscia);
 
 			super.paintComponent(g);
 		}
