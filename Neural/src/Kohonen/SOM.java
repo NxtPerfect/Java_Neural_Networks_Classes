@@ -80,9 +80,9 @@ public class SOM {
 		double d = 0.0;
 
 		int SS = (int) s;
-		for (int k = 0; k < epoki; k++) {
-			eta = ETA * (1.0 - k / (double) epoki);
-			s = S * (1.0 - k / (double) epoki);
+//		for (int k = 0; k < epoki; k++) {
+//			eta = ETA * (1.0 - k / (double) epoki);
+//			s = S * (1.0 - k / (double) epoki);
 			for (int i = idxW - SS; i <= idxW + SS; i++) {
 				if (i >= 0 && i < neurony.length)
 					for (int j = idxK - SS; j <= idxK + SS; j++) {
@@ -99,7 +99,7 @@ public class SOM {
 			 neurony[idxW][idxK].add(Vec2D.sub(wejscia,neurony[idxW][idxK]).mul(eta).mul(fS(d)));
 			eta *= epsEta;
 			s *= epsS;
-		}
+//		}
 	}
 
 	public void ucz2(Vec2D wejscia) {
