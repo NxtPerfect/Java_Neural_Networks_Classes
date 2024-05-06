@@ -96,10 +96,11 @@ public class SOM {
 						neurony[i][j].add(Vec2D.sub(wejscia, neurony[i][j]).mul(eta).mul(fS(d)));
 					}
 			}
-			 neurony[idxW][idxK].add(Vec2D.sub(wejscia,neurony[idxW][idxK]).mul(eta).mul(fS(d)));
+			neurony[idxW][idxK].add(Vec2D.sub(wejscia,neurony[idxW][idxK]).mul(eta).mul(fS(d)));
 			eta *= epsEta;
 			s *= epsS;
 //		}
+			System.out.println("Trenowanie...");
 	}
 
 	public void ucz2(Vec2D wejscia) {
