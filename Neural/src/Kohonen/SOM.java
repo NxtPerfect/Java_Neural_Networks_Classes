@@ -7,7 +7,7 @@ import java.util.Random;
 public class SOM {
 	Vec2D[][] neurony;
 	double eta, epsEta;
-	double ETA = 0.0, S = 0.0;
+	double ETA = 0.1, S = 0.99;
 	double s, epsS;
 	int epoki = 10;
 
@@ -69,7 +69,7 @@ public class SOM {
 		for (int i = 0; i < neurony.length; i++) {
 			for (int j = 0; j < neurony[i].length; j++) {
 				double dist = dist2(neurony[i][j], wejscia);
-				if (dist > minDist) {
+				if (dist >= minDist) {
 					continue;
 				}
 				idxW = i;
@@ -83,22 +83,22 @@ public class SOM {
 //		for (int k = 0; k < epoki; k++) {
 //			eta = ETA * (1.0 - k / (double) epoki);
 //			s = S * (1.0 - k / (double) epoki);
-			for (int i = idxW - SS; i <= idxW + SS; i++) {
-				if (i >= 0 && i < neurony.length)
-					for (int j = idxK - SS; j <= idxK + SS; j++) {
-						if (j < 0 || j >= neurony[i].length) {
-							continue;
-						}
-						d = Math.sqrt(Math.pow(idxW - i, 2.0) + Math.pow(idxK - j, 2.0));
-						if (d >= s) {
-							continue;
-						}
-						neurony[i][j].add(Vec2D.sub(wejscia, neurony[i][j]).mul(eta).mul(fS(d)));
+		for (int i = idxW - SS; i <= idxW + SS; i++) {
+			if (i >= 0 && i < neurony.length)
+				for (int j = idxK - SS; j <= idxK + SS; j++) {
+					if (j < 0 || j >= neurony[i].length) {
+						continue;
 					}
-			}
-			neurony[idxW][idxK].add(Vec2D.sub(wejscia,neurony[idxW][idxK]).mul(eta).mul(fS(d)));
-//			eta *= epsEta;
-//			s *= epsS;
+					d = Math.sqrt(Math.pow(idxW - i, 2.0) + Math.pow(idxK - j, 2.0));
+					if (d >= S) {
+						continue;
+					}
+					neurony[i][j].add(Vec2D.sub(wejscia, neurony[i][j]).mul(eta).mul(fS(d)));
+				}
+		}
+//		neurony[idxW][idxK].add(Vec2D.sub(wejscia, neurony[idxW][idxK]).mul(eta).mul(fS(d)));
+		eta *= epsEta;
+		s *= epsS;
 //		}
 	}
 
@@ -118,6 +118,7 @@ public class SOM {
 		winner.add(Vec2D.sub(wejscia, winner).mul(eta));
 
 		eta *= epsEta;
+		S *= epsS;
 	}
 
 	public double fS(double d) {
