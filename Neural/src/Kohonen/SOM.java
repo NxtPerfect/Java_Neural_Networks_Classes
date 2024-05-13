@@ -84,17 +84,18 @@ public class SOM {
 //			eta = ETA * (1.0 - k / (double) epoki);
 //			s = S * (1.0 - k / (double) epoki);
 		for (int i = idxW - SS; i <= idxW + SS; i++) {
-			if (i >= 0 && i < neurony.length)
-				for (int j = idxK - SS; j <= idxK + SS; j++) {
-					if (j < 0 || j >= neurony[i].length) {
-						continue;
-					}
-					d = Math.sqrt(Math.pow(idxW - i, 2.0) + Math.pow(idxK - j, 2.0));
-					if (d >= S) {
-						continue;
-					}
-					neurony[i][j].add(Vec2D.sub(wejscia, neurony[i][j]).mul(eta).mul(fS(d)));
+			if (i < 0 || i >= neurony.length)
+				continue;
+			for (int j = idxK - SS; j <= idxK + SS; j++) {
+				if (j < 0 || j >= neurony[i].length) {
+					continue;
 				}
+				d = Math.sqrt(Math.pow(idxW - i, 2.0) + Math.pow(idxK - j, 2.0));
+				if (d >= S) {
+					continue;
+				}
+				neurony[i][j].add(Vec2D.sub(wejscia, neurony[i][j]).mul(eta).mul(fS(d)));
+			}
 		}
 //		neurony[idxW][idxK].add(Vec2D.sub(wejscia, neurony[idxW][idxK]).mul(eta).mul(fS(d)));
 		eta *= epsEta;
