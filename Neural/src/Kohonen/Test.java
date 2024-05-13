@@ -46,7 +46,7 @@ public class Test extends JFrame {
 	private final int WIERSZE = 10, KOLUMNY = 10;
 	private final double AETA = 0.1, AEPSETA = 0.9999, AEPSS = 0.999;
 	private final int WYMIARY_OBRAZKA = 250;
-	private int iteracja = 0, MAKSYMALNA_ITERACJA = 200;
+	private int iteracja = 0, MAKSYMALNA_ITERACJA = 1000;
 
 	private class MyComponent extends JComponent {
 		@Override
@@ -61,7 +61,7 @@ public class Test extends JFrame {
 //			System.out.println(iteracja + " " + Math.round(MAKSYMALNA_ITERACJA / 2));
 			// Jeśli wybrany obrazek to prawy
 			if (iteracja == Math.round(MAKSYMALNA_ITERACJA / 2)) {
-				System.out.println("Obraz2");
+//				System.out.println("Obraz2");
 				obrazek = obraz2;
 				som.eta = AETA;
 //				som.epsEta = AEPSETA;
@@ -70,7 +70,7 @@ public class Test extends JFrame {
 				img2.setBorder(BorderFactory.createLineBorder(Color.RED));
 			}
 			if (iteracja >= MAKSYMALNA_ITERACJA || iteracja == 0) {
-				System.out.println("Obraz1");
+//				System.out.println("Obraz1");
 				obrazek = obraz1;
 				iteracja = 0;
 				som.eta = AETA;
@@ -93,21 +93,21 @@ public class Test extends JFrame {
 			}
 
 			// Oblicz wektor wejścia
-			double x = (-1 * (w / 2.0 - a * 2) * 2 / w) * 2 / 3;
-			double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 1.0) * 2 / 3;
+			double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 3;
+			double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.5) / 3;
 			Vec2D wejscia = new Vec2D(x, y);
 			// WTA
 			if (radioWTA.isSelected()) {
 				som.uczWTA(wejscia);
 				iteracja++;
-				System.out.println(iteracja);
+//				System.out.println(iteracja);
 				super.paintComponent(g);
 				return;
 			}
 			// WTM
 			som.ucz(wejscia);
 			iteracja++;
-			System.out.println(iteracja);
+//			System.out.println(iteracja);
 			super.paintComponent(g);
 			return;
 		}
