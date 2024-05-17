@@ -39,7 +39,7 @@ public class SOM {
 				int x = w2x(x0, w, neurony[i][j]);
 				int y = w2y(y0, h, neurony[i][j]);
 				int x1, y1;
-				g.setColor(Color.BLUE);
+				g.setColor(Color.DARK_GRAY);
 				if (i + 1 < neurony.length) {
 					x1 = w2x(x0, w, neurony[i + 1][j]);
 					y1 = w2y(y0, h, neurony[i + 1][j]);
@@ -50,7 +50,7 @@ public class SOM {
 					y1 = w2y(y0, h, neurony[i][j + 1]);
 					g.drawLine(x, y, x1, y1);
 				}
-				g.setColor(Color.RED);
+				g.setColor(Color.BLACK);
 				g.fillOval(x - 3, y - 3, 6, 6);
 			}
 	}
@@ -80,9 +80,6 @@ public class SOM {
 		double d = 0.0;
 
 		int SS = (int) s;
-//		for (int k = 0; k < epoki; k++) {
-//			eta = ETA * (1.0 - k / (double) epoki);
-//			s = S * (1.0 - k / (double) epoki);
 		for (int i = idxW - SS; i <= idxW + SS; i++) {
 			if (i < 0 || i >= neurony.length)
 				continue;
@@ -97,10 +94,8 @@ public class SOM {
 				neurony[i][j].add(Vec2D.sub(wejscia, neurony[i][j]).mul(eta).mul(fS(d)));
 			}
 		}
-//		neurony[idxW][idxK].add(Vec2D.sub(wejscia, neurony[idxW][idxK]).mul(eta).mul(fS(d)));
 		eta *= epsEta;
 		s *= epsS;
-//		}
 	}
 
 	public void uczWTA(Vec2D wejscia) {
@@ -119,7 +114,6 @@ public class SOM {
 		winner.add(Vec2D.sub(wejscia, winner).mul(eta));
 
 		eta *= epsEta;
-		S *= epsS;
 	}
 
 	public double fS(double d) {

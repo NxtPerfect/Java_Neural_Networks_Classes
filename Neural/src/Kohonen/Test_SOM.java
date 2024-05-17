@@ -15,7 +15,7 @@ public class Test_SOM extends JFrame {
 	private MyComponent komponent;
 	private SOM som;
 	private Timer timer;
-	private static int FRAMES = 1000, FPS = 1000/FRAMES;
+	private static final int FPS = 20;
 
 	class MyComponent extends JComponent {
 
@@ -46,7 +46,7 @@ public class Test_SOM extends JFrame {
 		Dimension d = kit.getScreenSize();
 		setBounds(d.width / 4, d.height / 4, d.width / 2, d.height / 2);
 		add(komponent = new MyComponent());
-		som = new SOM(10, 10, 0.1, 0.9999, 0.999);
+		som = new SOM(10, 10, 0.1, 0.9995, 0.9999);
 		timer = new Timer(FPS, new ActionListener() {
 
 			@Override
