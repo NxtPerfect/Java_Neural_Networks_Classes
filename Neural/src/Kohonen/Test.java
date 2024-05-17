@@ -44,79 +44,85 @@ public class Test extends JFrame {
 	private JComboBox<String> comboPierwszy = new JComboBox<String>(figures);
 	private JComboBox<String> comboDrugi = new JComboBox<String>(figures);
 	private final int WIERSZE = 10, KOLUMNY = 10;
-	private final double AETA = 0.1, AEPSETA = 0.9999, AEPSS = 0.999;
-	private final int WYMIARY_OBRAZKA = 250;
-	private int iteracja = 0, MAKSYMALNA_ITERACJA = 1000;
+	private final double AETA = 0.1, AEPSETA = 0.9995, AEPSS = 0.9999;
+	private final int WYMIARY_OBRAZKA = 250, FPS = 20;
+	private int iteracja = 0, MAKSYMALNA_ITERACJA = 10000;
 
 	private class MyComponent extends JComponent {
 		@Override
 		protected void paintComponent(Graphics g) {
 			int w = getWidth();
 			int h = getHeight();
+
 			som.draw(g, 0, 0, w, h);
-			Random rand = new Random();
-			int a = rand.nextInt(WYMIARY_OBRAZKA);
-			int b = rand.nextInt(WYMIARY_OBRAZKA);
+
+			for (int i = 0; i < FPS; i++) {
+				Random rand = new Random();
+				int a = rand.nextInt(WYMIARY_OBRAZKA);
+				int b = rand.nextInt(WYMIARY_OBRAZKA);
 
 //			System.out.println(iteracja + " " + Math.round(MAKSYMALNA_ITERACJA / 2));
-			// Jeśli wybrany obrazek to prawy
-			if (iteracja == Math.round(MAKSYMALNA_ITERACJA / 2)) {
+				// Jeśli wybrany obrazek to prawy
+				if (iteracja == Math.round(MAKSYMALNA_ITERACJA / 2)) {
 //				System.out.println("Obraz2");
-				obrazek = obraz2;
-				som.eta = AETA;
-//				som.epsEta = AEPSETA;
-//				som.epsS = AEPSS;
-				img1.setBorder(null);
-				img2.setBorder(BorderFactory.createLineBorder(Color.RED));
-			}
-			if (iteracja >= MAKSYMALNA_ITERACJA || iteracja == 0) {
-//				System.out.println("Obraz1");
-				obrazek = obraz1;
-				iteracja = 0;
-				som.eta = AETA;
-//				som.epsEta = AEPSETA;
-//				som.epsS = AEPSS;
-				img1.setBorder(BorderFactory.createLineBorder(Color.RED));
-				img2.setBorder(null);
-			}
-			if (obrazek == null) {
-				try {
-					obrazek = ImageIO.read(new File(sciezkaKolo));
-				} catch (Exception e) {
 					obrazek = obraz2;
+					som.eta = AETA;
+//				som.epsEta = AEPSETA;
+//				som.epsS = AEPSS;
+					img1.setBorder(null);
+					img2.setBorder(BorderFactory.createLineBorder(Color.RED));
 				}
-			}
+				if (iteracja >= MAKSYMALNA_ITERACJA || iteracja == 0) {
+//				System.out.println("Obraz1");
+					obrazek = obraz1;
+					iteracja = 0;
+					som.eta = AETA;
+//				som.epsEta = AEPSETA;
+//				som.epsS = AEPSS;
+					img1.setBorder(BorderFactory.createLineBorder(Color.RED));
+					img2.setBorder(null);
+				}
+				if (obrazek == null) {
+					try {
+						obrazek = ImageIO.read(new File(sciezkaKolo));
+					} catch (Exception e) {
+						obrazek = obraz2;
+					}
+				}
 
-			if (obrazek.getRGB(a, b) != Color.BLACK.getRGB()) {
-				super.paintComponent(g);
-				return;
-			}
+				if (obrazek.getRGB(a, b) != Color.BLACK.getRGB()) {
+					super.paintComponent(g);
+					continue;
+				}
 
-			// Oblicz wektor wejścia
-			double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 3;
-			double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.5) / 3;
-			Vec2D wejscia = new Vec2D(x, y);
-			// WTA
-			if (radioWTA.isSelected()) {
-				som.uczWTA(wejscia);
+				// Oblicz wektor wejścia
+				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 2;
+				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.75) / 2;
+//				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
+//				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.6) * 3 / 5;
+				Vec2D wejscia = new Vec2D(x, y);
+				// WTA
+				if (radioWTA.isSelected()) {
+					som.uczWTA(wejscia);
+					iteracja++;
+					System.out.println(iteracja);
+					super.paintComponent(g);
+					continue;
+				}
+				// WTM
+				som.ucz(wejscia);
 				iteracja++;
-//				System.out.println(iteracja);
+				System.out.println(iteracja);
 				super.paintComponent(g);
-				return;
+				continue;
 			}
-			// WTM
-			som.ucz(wejscia);
-			iteracja++;
-//			System.out.println(iteracja);
-			super.paintComponent(g);
-			return;
 		}
 	}
 
 	public Test() throws HeadlessException {
 		super("Test SOM");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(400, 400);
+		setSize(800, 400);
 		setVisible(true);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds(d.width / 4, d.height / 4, d.width / 2, d.height / 2);
