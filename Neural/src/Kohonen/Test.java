@@ -44,9 +44,9 @@ public class Test extends JFrame {
 	private JComboBox<String> comboPierwszy = new JComboBox<String>(figures);
 	private JComboBox<String> comboDrugi = new JComboBox<String>(figures);
 	private final int WIERSZE = 10, KOLUMNY = 10;
-	private final double AETA = 0.1, AEPSETA = 0.9995, AEPSS = 0.9999;
+	private final double AETA = 0.01, AEPSETA = 0.9995, AEPSS = 0.9999;
 	private final int WYMIARY_OBRAZKA = 250, FPS = 20;
-	private int iteracja = 0, MAKSYMALNA_ITERACJA = 10000;
+	private int iteracja = 0, MAKSYMALNA_ITERACJA = 3000;
 
 	private class MyComponent extends JComponent {
 		@Override
@@ -122,10 +122,10 @@ public class Test extends JFrame {
 	public Test() throws HeadlessException {
 		super("Test SOM");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(800, 400);
 		setVisible(true);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds(d.width / 4, d.height / 4, d.width / 2, d.height / 2);
+		setBounds(d.width, d.height, d.width / 2, d.height / 2);
+		setSize(d.width, d.height);
 		setLayout(new GridLayout(1, 2, 20, 20));
 		gridLewo = new JPanel(new GridLayout(3, 1, 0, 0));
 		gridPrawo = new JPanel(new GridLayout(3, 1, 40, 40));
