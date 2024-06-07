@@ -7,8 +7,8 @@ import java.util.Random;
 public class SOM {
 	Vec2D[][] neurony;
 	double eta, epsEta;
-	double ETA = 0.1, S = 0.99;
 	double s, epsS;
+	double S;
 	int epoki = 10;
 
 	public SOM() {
@@ -17,7 +17,7 @@ public class SOM {
 	}
 
 	public SOM(int w, int h, double aeta, double aepsEta, double aepsS) {
-		ETA = eta = aeta;
+		eta = aeta;
 		epsEta = aepsEta;
 		S = s = Math.sqrt(w * h);
 		epsS = aepsS;
@@ -88,7 +88,7 @@ public class SOM {
 					continue;
 				}
 				d = Math.sqrt(Math.pow(idxW - i, 2.0) + Math.pow(idxK - j, 2.0));
-				if (d >= S) {
+				if (d >= s) {
 					continue;
 				}
 				neurony[i][j].add(Vec2D.sub(wejscia, neurony[i][j]).mul(eta).mul(fS(d)));
@@ -123,4 +123,20 @@ public class SOM {
 	public double dist2(Vec2D a, Vec2D b) {
 		return Math.pow(a.x - b.x, 2.0) + Math.pow(a.y - b.y, 2.0);
 	}
+
+	public void resetWeights() {
+        Random r = new Random();
+        for (int i = 0; i < neurony.length; i++) {
+            for (int j = 0; j < neurony[i].length; j++) {
+                double a = 0.01 * (r.nextDouble() - 0.5) / 0.5;
+                double b = 0.01 * (r.nextDouble() - 0.5) / 0.5;
+                neurony[i][j] = new Vec2D(a, b);
+            }
+        }
+    }
+
+    public void resetLearningRate(double aeta) {
+        eta = aeta;
+        s = S;
+    }
 }
