@@ -47,12 +47,20 @@ public class Test extends JFrame {
 	private final double AETA = 0.1, AEPSETA = 0.9995, AEPSS = 0.999;
 	private final int WYMIARY_OBRAZKA = 250, FPS = 20;
 	private int iteracja = 0, MAKSYMALNA_ITERACJA = 8000;
+	private boolean firstIter = true;
 
 	private class MyComponent extends JComponent {
 		@Override
 		protected void paintComponent(Graphics g) {
 			int w = getWidth();
 			int h = getHeight();
+
+			if (firstIter) {
+				obrazek = obraz1;
+				img1.setBorder(BorderFactory.createLineBorder(Color.RED));
+				img2.setBorder(null);
+				firstIter = false;
+			}
 
 			som.draw(g, 0, 0, w, h);
 			for (int i = 0; i < FPS; i++) {
@@ -64,15 +72,15 @@ public class Test extends JFrame {
 				if (iteracja == Math.round(MAKSYMALNA_ITERACJA / 2)) {
 					obrazek = obraz2;
 //					som.eta = AETA;
-					som.resetLearningRate(AETA);
+					som.resetLearningRate(0.275);
 					img1.setBorder(null);
 					img2.setBorder(BorderFactory.createLineBorder(Color.RED));
 				}
-				if (iteracja >= MAKSYMALNA_ITERACJA || iteracja == 0) {
+				if (iteracja >= MAKSYMALNA_ITERACJA) {
 					obrazek = obraz1;
 					iteracja = 0;
 //					som.eta = AETA;
-					som.resetLearningRate(AETA);
+					som.resetLearningRate(0.275);
 					img1.setBorder(BorderFactory.createLineBorder(Color.RED));
 					img2.setBorder(null);
 				}
@@ -90,7 +98,7 @@ public class Test extends JFrame {
 				}
 
 				// Oblicz wektor wejścia
-				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 2;
+				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 6 / 9;
 				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.8) / 2;
 //				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
 //				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.6) * 3 / 5;
