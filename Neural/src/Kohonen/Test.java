@@ -76,13 +76,6 @@ public class Test extends JFrame {
 					img1.setBorder(BorderFactory.createLineBorder(Color.RED));
 					img2.setBorder(null);
 				}
-//				if (iteracja == 0 && firstIter) {
-//					obrazek = obraz1;
-//					iteracja = 0;
-//					img1.setBorder(BorderFactory.createLineBorder(Color.RED));
-//					img2.setBorder(null);
-//					firstIter = false;
-//				}
 				if (obrazek == null) {
 					try {
 						obrazek = ImageIO.read(new File(sciezkaTrojkat));
@@ -99,8 +92,7 @@ public class Test extends JFrame {
 				// Oblicz wektor wejścia
 				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 2;
 				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.8) / 2;
-//				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
-//				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.6) * 3 / 5;
+
 				Vec2D wejscia = new Vec2D(x, y);
 				// WTA
 				if (radioWTA.isSelected()) {
@@ -132,6 +124,7 @@ public class Test extends JFrame {
 		gridPrawo = new JPanel(new GridLayout(3, 1, 40, 40));
 		add(gridLewo);
 		add(gridPrawo);
+		setResizable(false);
 
 		Font newFont = new Font("Serif", Font.PLAIN, 20);
 
