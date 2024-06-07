@@ -44,23 +44,16 @@ public class Test extends JFrame {
 	private JComboBox<String> comboPierwszy = new JComboBox<String>(figures);
 	private JComboBox<String> comboDrugi = new JComboBox<String>(figures);
 	private final int WIERSZE = 10, KOLUMNY = 10;
-	private final double AETA = 0.1, AEPSETA = 0.9995, AEPSS = 0.999;
+	private final double AETA = 0.1, AEPSETA = 0.9995, AEPSS = 0.999, RESET_FACTOR = 0.75;
 	private final int WYMIARY_OBRAZKA = 250, FPS = 20;
 	private int iteracja = 0, MAKSYMALNA_ITERACJA = 8000;
-	private boolean firstIter = true;
+	private boolean firstIter = true, changeObrazek = true;
 
 	private class MyComponent extends JComponent {
 		@Override
 		protected void paintComponent(Graphics g) {
 			int w = getWidth();
 			int h = getHeight();
-
-			if (firstIter) {
-				obrazek = obraz1;
-				img1.setBorder(BorderFactory.createLineBorder(Color.RED));
-				img2.setBorder(null);
-				firstIter = false;
-			}
 
 			som.draw(g, 0, 0, w, h);
 			for (int i = 0; i < FPS; i++) {
@@ -71,22 +64,28 @@ public class Test extends JFrame {
 				// Jeśli wybrany obrazek to prawy
 				if (iteracja == Math.round(MAKSYMALNA_ITERACJA / 2)) {
 					obrazek = obraz2;
-//					som.eta = AETA;
-					som.resetLearningRate(0.275);
+					som.resetLearningRate(RESET_FACTOR);
 					img1.setBorder(null);
 					img2.setBorder(BorderFactory.createLineBorder(Color.RED));
 				}
-				if (iteracja >= MAKSYMALNA_ITERACJA) {
+				if (iteracja >= MAKSYMALNA_ITERACJA || iteracja == 0) {
 					obrazek = obraz1;
 					iteracja = 0;
-//					som.eta = AETA;
-					som.resetLearningRate(0.275);
+					if (!firstIter) som.resetLearningRate(RESET_FACTOR);
+					firstIter = false;
 					img1.setBorder(BorderFactory.createLineBorder(Color.RED));
 					img2.setBorder(null);
 				}
+//				if (iteracja == 0 && firstIter) {
+//					obrazek = obraz1;
+//					iteracja = 0;
+//					img1.setBorder(BorderFactory.createLineBorder(Color.RED));
+//					img2.setBorder(null);
+//					firstIter = false;
+//				}
 				if (obrazek == null) {
 					try {
-						obrazek = ImageIO.read(new File(sciezkaKolo));
+						obrazek = ImageIO.read(new File(sciezkaTrojkat));
 					} catch (Exception e) {
 						obrazek = obraz2;
 					}
@@ -98,7 +97,7 @@ public class Test extends JFrame {
 				}
 
 				// Oblicz wektor wejścia
-				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 6 / 9;
+				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 2;
 				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.8) / 2;
 //				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
 //				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.6) * 3 / 5;
@@ -127,7 +126,7 @@ public class Test extends JFrame {
 		setVisible(true);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds(d.width / 4, d.height / 4, d.width / 2, d.height / 2);
-		setSize(d.width , d.height );
+		setSize(d.width, d.height);
 		setLayout(new GridLayout(1, 2, 20, 20));
 		gridLewo = new JPanel(new GridLayout(3, 1, 0, 0));
 		gridPrawo = new JPanel(new GridLayout(3, 1, 40, 40));
@@ -152,6 +151,9 @@ public class Test extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String wybranyKsztalt = comboPierwszy.getSelectedItem().toString();
+				if (obrazek == obraz1) {
+					changeObrazek = true;
+				}
 				switch (wybranyKsztalt) {
 				case "Koło": {
 					obraz1 = ustawObraz(obraz1, sciezkaKolo, img1);
@@ -168,6 +170,10 @@ public class Test extends JFrame {
 				default:
 					obraz1 = ustawObraz(obraz1, sciezkaKolo, img1);
 				}
+				if (changeObrazek) {
+					obrazek = obraz1;
+					changeObrazek = false;
+				}
 			}
 		});
 
@@ -175,6 +181,9 @@ public class Test extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String wybranyKsztalt = comboDrugi.getSelectedItem().toString();
+				if (obrazek == obraz2) {
+					changeObrazek = true;
+				}
 				switch (wybranyKsztalt) {
 				case "Koło": {
 					obraz2 = ustawObraz(obraz2, sciezkaKolo, img2);
@@ -190,6 +199,10 @@ public class Test extends JFrame {
 				}
 				default:
 					obraz2 = ustawObraz(obraz2, sciezkaKolo, img2);
+				}
+				if (changeObrazek) {
+					obrazek = obraz2;
+					changeObrazek = false;
 				}
 			}
 		});
