@@ -8,7 +8,7 @@ public class SOM {
 	Vec2D[][] neurony;
 	double eta, epsEta;
 	double s, epsS;
-	double S;
+	double S, ETA;
 
 	public SOM() {
 		neurony = null;
@@ -16,7 +16,7 @@ public class SOM {
 	}
 
 	public SOM(int w, int h, double aeta, double aepsEta, double aepsS) {
-		eta = aeta;
+		ETA = eta = aeta;
 		epsEta = aepsEta;
 //		S = s = Math.sqrt(w * h);
 		S = s = (w + h) / 2;
@@ -124,8 +124,8 @@ public class SOM {
 		return Math.pow(a.x - b.x, 2.0) + Math.pow(a.y - b.y, 2.0);
 	}
 
-    public void resetLearningRate(double aeta) {
-        eta = aeta;
-        s = S;
+    public void resetLearningRate(double resetFactor) {
+        eta = ETA * resetFactor;
+        s = S * resetFactor;
     }
 }
