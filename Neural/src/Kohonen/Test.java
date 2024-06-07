@@ -46,7 +46,7 @@ public class Test extends JFrame {
 	private final int WIERSZE = 10, KOLUMNY = 10;
 	private final double AETA = 0.1, AEPSETA = 0.9995, AEPSS = 0.999;
 	private final int WYMIARY_OBRAZKA = 250, FPS = 20;
-	private int iteracja = 0, MAKSYMALNA_ITERACJA = 12000;
+	private int iteracja = 0, MAKSYMALNA_ITERACJA = 8000;
 
 	private class MyComponent extends JComponent {
 		@Override
@@ -90,8 +90,8 @@ public class Test extends JFrame {
 				}
 
 				// Oblicz wektor wejścia
-				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
-				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.75) * 3 / 5;
+				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 2;
+				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.8) / 2;
 //				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
 //				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.6) * 3 / 5;
 				Vec2D wejscia = new Vec2D(x, y);
@@ -118,8 +118,8 @@ public class Test extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds(d.width, d.height, d.width / 2, d.height / 2);
-		setSize(d.width, d.height);
+		setBounds(d.width / 4, d.height / 4, d.width / 2, d.height / 2);
+		setSize(d.width , d.height );
 		setLayout(new GridLayout(1, 2, 20, 20));
 		gridLewo = new JPanel(new GridLayout(3, 1, 0, 0));
 		gridPrawo = new JPanel(new GridLayout(3, 1, 40, 40));

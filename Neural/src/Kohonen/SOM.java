@@ -9,7 +9,6 @@ public class SOM {
 	double eta, epsEta;
 	double s, epsS;
 	double S;
-	int epoki = 10;
 
 	public SOM() {
 		neurony = null;
@@ -19,7 +18,8 @@ public class SOM {
 	public SOM(int w, int h, double aeta, double aepsEta, double aepsS) {
 		eta = aeta;
 		epsEta = aepsEta;
-		S = s = Math.sqrt(w * h);
+//		S = s = Math.sqrt(w * h);
+		S = s = (w + h) / 2;
 		epsS = aepsS;
 		neurony = new Vec2D[h][];
 		for (int i = 0; i < h; i++)
@@ -123,17 +123,6 @@ public class SOM {
 	public double dist2(Vec2D a, Vec2D b) {
 		return Math.pow(a.x - b.x, 2.0) + Math.pow(a.y - b.y, 2.0);
 	}
-
-	public void resetWeights() {
-        Random r = new Random();
-        for (int i = 0; i < neurony.length; i++) {
-            for (int j = 0; j < neurony[i].length; j++) {
-                double a = 0.01 * (r.nextDouble() - 0.5) / 0.5;
-                double b = 0.01 * (r.nextDouble() - 0.5) / 0.5;
-                neurony[i][j] = new Vec2D(a, b);
-            }
-        }
-    }
 
     public void resetLearningRate(double aeta) {
         eta = aeta;
