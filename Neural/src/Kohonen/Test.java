@@ -44,9 +44,9 @@ public class Test extends JFrame {
 	private JComboBox<String> comboPierwszy = new JComboBox<String>(figures);
 	private JComboBox<String> comboDrugi = new JComboBox<String>(figures);
 	private final int WIERSZE = 10, KOLUMNY = 10;
-	private final double AETA = 0.01, AEPSETA = 0.9995, AEPSS = 0.9999;
+	private final double AETA = 0.1, AEPSETA = 0.9995, AEPSS = 0.999;
 	private final int WYMIARY_OBRAZKA = 250, FPS = 20;
-	private int iteracja = 0, MAKSYMALNA_ITERACJA = 3000;
+	private int iteracja = 0, MAKSYMALNA_ITERACJA = 12000;
 
 	private class MyComponent extends JComponent {
 		@Override
@@ -55,30 +55,24 @@ public class Test extends JFrame {
 			int h = getHeight();
 
 			som.draw(g, 0, 0, w, h);
-
 			for (int i = 0; i < FPS; i++) {
 				Random rand = new Random();
 				int a = rand.nextInt(WYMIARY_OBRAZKA);
 				int b = rand.nextInt(WYMIARY_OBRAZKA);
 
-//			System.out.println(iteracja + " " + Math.round(MAKSYMALNA_ITERACJA / 2));
 				// Jeśli wybrany obrazek to prawy
 				if (iteracja == Math.round(MAKSYMALNA_ITERACJA / 2)) {
-//				System.out.println("Obraz2");
 					obrazek = obraz2;
-					som.eta = AETA;
-//				som.epsEta = AEPSETA;
-//				som.epsS = AEPSS;
+//					som.eta = AETA;
+					som.resetLearningRate(AETA);
 					img1.setBorder(null);
 					img2.setBorder(BorderFactory.createLineBorder(Color.RED));
 				}
 				if (iteracja >= MAKSYMALNA_ITERACJA || iteracja == 0) {
-//				System.out.println("Obraz1");
 					obrazek = obraz1;
 					iteracja = 0;
-					som.eta = AETA;
-//				som.epsEta = AEPSETA;
-//				som.epsS = AEPSS;
+//					som.eta = AETA;
+					som.resetLearningRate(AETA);
 					img1.setBorder(BorderFactory.createLineBorder(Color.RED));
 					img2.setBorder(null);
 				}
@@ -96,8 +90,8 @@ public class Test extends JFrame {
 				}
 
 				// Oblicz wektor wejścia
-				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) / 2;
-				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.75) / 2;
+				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
+				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.75) * 3 / 5;
 //				double x = (-1 * (w / 2.0 - a * 2) * 2 / w + 0.4) * 3 / 5;
 //				double y = (-1 * (h / 2.0 - b * 2) * 2 / h - 0.6) * 3 / 5;
 				Vec2D wejscia = new Vec2D(x, y);
