@@ -18,8 +18,8 @@ public class SOM {
 	public SOM(int w, int h, double aeta, double aepsEta, double aepsS) {
 		ETA = eta = aeta;
 		epsEta = aepsEta;
-//		S = s = Math.sqrt(w * h);
-		S = s = (w + h) / 2;
+		S = s = Math.sqrt(w * h);
+//		S = s = (w + h) / 2;
 		epsS = aepsS;
 		neurony = new Vec2D[h][];
 		for (int i = 0; i < h; i++)
